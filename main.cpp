@@ -6,14 +6,14 @@
  *
  **************************************************************************/
 
-#include <stdio.h>
+#include <iostream>
+#include <opencv2/imgproc/imgproc.hpp>
 
 int main( int argc, char* argv[] )
 {
-    int ret = 0;
-    
+    cv::grabCut();
 
-    return ret;
+    return 0;
 }
 
 
