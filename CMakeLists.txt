@@ -6,12 +6,14 @@ find_package(OpenCV REQUIRED)
 
 SET(SRC 
     main.cpp
+    grabcut.cpp
     )
 
 SET(HDR
+    grabcut.h
     )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${HDR})
-ADD_EXECUTABLE(test grabcut.cpp)
+ADD_EXECUTABLE(grabcut_demo grabcut_demo.cpp grabcut.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-target_link_libraries(test ${OpenCV_LIBS})
+target_link_libraries(grabcut_demo ${OpenCV_LIBS})

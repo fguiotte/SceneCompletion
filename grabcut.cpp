@@ -1,10 +1,8 @@
 //#include "opencv2/imgcodecs.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <iostream>
+#include "grabcut.h"
 using namespace std;
 using namespace cv;
-static void help()
+void help()
 {
     cout << "\nThis program demonstrates GrabCut segmentation -- select an object in a region\n"
         "and then grabcut will attempt to segment it out.\n"
@@ -24,13 +22,6 @@ static void help()
         "\tCTRL+right mouse button - set GC_PR_BGD pixels\n"
         "\tSHIFT+right mouse button - set GC_PR_FGD pixels\n" << endl;
 }
-const Scalar RED = Scalar(0,0,255);
-const Scalar PINK = Scalar(230,130,255);
-const Scalar BLUE = Scalar(255,0,0);
-const Scalar LIGHTBLUE = Scalar(255,255,160);
-const Scalar GREEN = Scalar(0,255,0);
-const int BGD_KEY = EVENT_FLAG_CTRLKEY;
-const int FGD_KEY = EVENT_FLAG_SHIFTKEY;
 static void getBinMask( const Mat& comMask, Mat& binMask )
 {
     if( comMask.empty() || comMask.type()!=CV_8UC1 )
@@ -39,31 +30,6 @@ static void getBinMask( const Mat& comMask, Mat& binMask )
         binMask.create( comMask.size(), CV_8UC1 );
     binMask = comMask & 1;
 }
-class GCApplication
-{
-    public:
-        enum{ NOT_SET = 0, IN_PROCESS = 1, SET = 2 };
-        static const int radius = 2;
-        static const int thickness = -1;
-        void reset();
-        void setImageAndWinName( const Mat& _image, const string& _winName );
-        void showImage() const;
-        void mouseClick( int event, int x, int y, int flags, void* param );
-        int nextIter();
-        int getIterCount() const { return iterCount; }
-    private:
-        void setRectInMask();
-        void setLblsInMask( int flags, Point p, bool isPr );
-        const string* winName;
-        const Mat* image;
-        Mat mask;
-        Mat bgdModel, fgdModel;
-        uchar rectState, lblsState, prLblsState;
-        bool isInitialized;
-        Rect rect;
-        vector<Point> fgdPxls, bgdPxls, prFgdPxls, prBgdPxls;
-        int iterCount;
-};
 void GCApplication::reset()
 {
     if( !mask.empty() )
@@ -237,70 +203,4 @@ int GCApplication::nextIter()
     bgdPxls.clear(); fgdPxls.clear();
     prBgdPxls.clear(); prFgdPxls.clear();
     return iterCount;
-}
-GCApplication gcapp;
-static void on_mouse( int event, int x, int y, int flags, void* param )
-{
-    gcapp.mouseClick( event, x, y, flags, param );
-}
-int main( int argc, char** argv )
-{
-    if( argc!=2 )
-    {
-        help();
-        return 1;
-    }
-    string filename = argv[1];
-    if( filename.empty() )
-    {
-        cout << "\nDurn, couldn't read in " << argv[1] << endl;
-        return 1;
-    }
-    Mat image = imread( filename, 1 );
-    if( image.empty() )
-    {
-        cout << "\n Durn, couldn't read image filename " << filename << endl;
-        return 1;
-    }
-    Mat im2;
-    for (int i = 0; i < 6; i++) {
-        bilateralFilter(image, im2, 10, 20.0, 20.0);
-        im2.copyTo(image);
-    }
-    help();
-    const string winName = "image";
-    namedWindow( winName, WINDOW_AUTOSIZE );
-    setMouseCallback( winName, on_mouse, 0 );
-    gcapp.setImageAndWinName( image, winName );
-    gcapp.showImage();
-    for(;;)
-    {
-        int c = waitKey(0);
-        switch( (char) c )
-        {
-            case '\x1b':
-                cout << "Exiting ..." << endl;
-                goto exit_main;
-            case 'r':
-                cout << endl;
-                gcapp.reset();
-                gcapp.showImage();
-                break;
-            case 'n':
-                int iterCount = gcapp.getIterCount();
-                cout << "<" << iterCount << "... ";
-                int newIterCount = gcapp.nextIter();
-                if( newIterCount > iterCount )
-                {
-                    gcapp.showImage();
-                    cout << iterCount << ">" << endl;
-                }
-                else
-                    cout << "rect must be determined>" << endl;
-                break;
-        }
-    }
-exit_main:
-    destroyWindow( winName );
-    return 0;
 }
