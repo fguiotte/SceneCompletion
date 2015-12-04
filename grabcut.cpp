@@ -42,6 +42,10 @@ void GCApplication::reset()
     prLblsState = NOT_SET;
     iterCount = 0;
 }
+void GCApplication::getMask(cv::Mat& rmask) const
+{
+    mask.copyTo(rmask);
+}
 void GCApplication::setImageAndWinName( const Mat& _image, const string& _winName )
 {
     if( _image.empty() || _winName.empty() )

@@ -34,6 +34,7 @@ class GCApplication
         void mouseClick( int event, int x, int y, int flags, void* param );
         int nextIter();
         int getIterCount() const { return iterCount; }
+        void getMask(cv::Mat& rmask) const;
     private:
         void setRectInMask();
         void setLblsInMask( int flags, cv::Point p, bool isPr );
