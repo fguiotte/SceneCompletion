@@ -15,6 +15,8 @@ class MinSeam {
     public:
         MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask);
         virtual ~MinSeam();
+        cv::Mat getEnergy() const;
+        void computeEnergyCumMaps();
 
     private:
         cv::Mat _background;

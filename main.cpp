@@ -22,7 +22,22 @@ static void on_mouse(int event, int x, int y, int flags, void* param )
     gcapp.mouseClick( event, x, y, flags, param );
 }
 
-int main( int argc, char* argv[] )
+int main( int argc, char* argv[] ) {
+    Mat bg, fg, mask;
+    bg = imread("../img/demo/bg.jpg");
+    fg = imread("../img/demo/fg.png");
+    mask = imread("../img/demo/mask.png");
+
+    MinSeam ms(bg, fg, mask);
+    Mat energy = ms.getEnergy();
+
+    char window_name[] = "MinSeam demo";
+    namedWindow(window_name, WINDOW_AUTOSIZE);
+    imshow(window_name, energy);
+    waitKey(0);
+}
+
+int old_main( int argc, char* argv[] )
 {
     cv::Mat src;
     cv::Mat dst;
