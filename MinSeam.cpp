@@ -14,6 +14,10 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
     _foreground(foreground),
     _mask(mask) {
     pow((background - foreground), 2, _energy);
+    vector<Mat> channels;
+    split(_energy, channels);
+    _energy = channels[0] + channels[1] + channels[2];
+    //cout << _energy << endl;
 }
 
 MinSeam::~MinSeam() {
