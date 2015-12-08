@@ -10,6 +10,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "grabcut.h"
+#include "MinSeam.h"
 
 using namespace std;
 using namespace cv;

@@ -7,10 +7,12 @@ find_package(OpenCV REQUIRED)
 SET(SRC 
     main.cpp
     grabcut.cpp
+    MinSeam.cpp
     )
 
 SET(HDR
     grabcut.h
+    MinSeam.h
     )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${HDR})
