@@ -24,7 +24,7 @@ class MinSeam {
         cv::Mat _mask;
 
     private:
-        cv::Mat _energy;
+        cv::Mat_<cv::Vec3f> _energy;
         std::vector<cv::Mat> _energyCum;
 };
 
