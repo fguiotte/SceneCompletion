@@ -24,7 +24,6 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
     vector<Mat> channels;
     split(_energy, channels);
     _energy = channels[0] + channels[1] + channels[2];
-    //cout << _energy << endl;
 }
 
 MinSeam::~MinSeam() {
@@ -35,4 +34,14 @@ Mat MinSeam::getEnergy() const {
 }
 
 void MinSeam::computeEnergyCumMaps() {
+    Point steam0(895, 708);
+    Point steam1(895, 739);
+    
+    cv::Mat_<double> eCum(_energy.rows, _energy.cols, CV_32FC1);
+    for (int i = steam0.y; i < steam1.y; i++) {
+        Point steamStart(steam0.x, i);
+        eCum.at<double>(steamStart) = -1.0f;
+
+        eCum = neighbouroude(steam0, steam1, steamStart); // Init de eCum dans neighbouroude; duplique le for -1 dedans;
+    }
 }
