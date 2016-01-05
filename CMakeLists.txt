@@ -8,11 +8,13 @@ SET(SRC
     main.cpp
     grabcut.cpp
     MinSeam.cpp
+    utils.cpp
     )
 
 SET(HDR
     grabcut.h
     MinSeam.h
+    utils.h
     )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${HDR})

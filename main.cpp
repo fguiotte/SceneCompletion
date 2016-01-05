@@ -11,6 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "grabcut.h"
 #include "MinSeam.h"
+#include "utils.h"
 
 using namespace std;
 using namespace cv;
@@ -25,7 +26,7 @@ static void on_mouse(int event, int x, int y, int flags, void* param )
 int main( int argc, char* argv[] ) {
     Mat bg, fg, mask;
     bg = imread("../img/demo/bg.jpg");
-    fg = imread("../img/demo/fg.png");
+    fg = imread("../img/demo/fg.jpg");
     mask = imread("../img/demo/mask.png");
 
     MinSeam ms(bg, fg, mask);
@@ -33,7 +34,7 @@ int main( int argc, char* argv[] ) {
 
     char window_name[] = "MinSeam demo";
     namedWindow(window_name, WINDOW_AUTOSIZE);
-    imshow(window_name, energy);
+    imshow(window_name, norm_0_255(energy));
     waitKey(0);
 }
 
