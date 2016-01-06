@@ -26,6 +26,7 @@ class MinSeam {
     private:
         cv::Mat_<cv::Vec3f> _energy;
         std::vector<cv::Mat> _energyCum;
+        cv::Mat_<double> neighbouroude (cv::Point steam0, cv::Point steam1, cv::Point steamStart);
 };
 
 #endif /* __MINSEAM_H__ */
