@@ -57,18 +57,24 @@ Mat_<double> MinSeam::neighbouroude (Point steam0, Point steam1, Point steamStar
 
     pointStack.push(firstPoint);
 
+    cv::Rect bounds(cv::Point(), eCum.size());
+
     while (! pointStack.empty()) {
-    Point currentPoint = pointStack.pop();
+    Point currentPoint = pointStack.front();
+    pointStack.pop();
 
     double currentEnergy = eCum.at<double>(currentPoint);
     for (int i = -1; i <= 1; i++)
         for (int j = -1; j <= 1; j++) {
-            // TODO: condition au bord
-            // TODO: test si déjà visité
+            // test si actuel
             if (!i && !j) continue;
             Point neighbour(currentPoint.x + i, currentPoint.y + j);
-            pointStack.push(neighbour);
+            // condition au bord
+            if (! bounds.contains(currentPoint)) continue;
+            // test si déjà visité
+            if (eCum.at<double>(neighbour) != 0) continue; // Probably okay...
             eCum.at<double>(neighbour) = currentEnergy + _energy.at<double>(neighbour);
+            pointStack.push(neighbour);
         }
     }
 
