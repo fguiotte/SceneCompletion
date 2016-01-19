@@ -16,6 +16,7 @@ class MinSeam {
         MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask);
         virtual ~MinSeam();
         cv::Mat getEnergy() const;
+        cv::Mat getEnergyCum(unsigned int i) const;
         void computeEnergyCumMaps();
 
     private:
@@ -26,7 +27,7 @@ class MinSeam {
     private:
         cv::Mat_<cv::Vec3f> _energy;
         std::vector<cv::Mat> _energyCum;
-        cv::Mat_<double> neighbouroude (cv::Point steam0, cv::Point steam1, cv::Point steamStart);
+        void neighbouroude (cv::Point steam0, cv::Point steam1, cv::Point steamStart);
 };
 
 #endif /* __MINSEAM_H__ */

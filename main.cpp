@@ -35,7 +35,21 @@ int main( int argc, char* argv[] ) {
     char window_name[] = "MinSeam demo";
     namedWindow(window_name, WINDOW_AUTOSIZE);
     imshow(window_name, norm_0_255(energy));
-    waitKey(0);
+
+    ms.computeEnergyCumMaps();
+    Mat energyCum = ms.getEnergyCum(10);
+    char window2_name[] = "Energy cum demo";
+    namedWindow(window2_name, WINDOW_AUTOSIZE);
+    Mat energyCumLog;
+    log(1 + energyCum, energyCumLog);
+    imshow(window2_name, norm_0_255(energyCumLog));
+
+    int quit = 0;
+    while (quit != 113)
+        quit = waitKey();
+
+    cout << "Done." << endl;
+    return 0;
 }
 
 int old_main( int argc, char* argv[] )
