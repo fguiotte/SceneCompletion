@@ -46,7 +46,12 @@ int main( int argc, char* argv[] ) {
     namedWindow(window2_name, WINDOW_AUTOSIZE);
     Mat energyCumLog;
     //log(1 + energyCum, energyCumLog);
-    imshow(window2_name, norm_0_255(energyCum));
+    Mat energyDisplay;
+    normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC1);
+    //imshow(window2_name, norm_0_255(energyCum));
+    imshow(window2_name, energyDisplay);
+
+    imwrite("test.png", energyDisplay);
 
     int quit = 0;
     while (quit != 113)
