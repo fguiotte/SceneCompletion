@@ -53,6 +53,7 @@ int main( int argc, char* argv[] ) {
 
     imwrite("test.png", energyDisplay);
 
+    ms.computeMinimalSeam(10);
     int quit = 0;
     while (quit != 113)
         quit = waitKey();

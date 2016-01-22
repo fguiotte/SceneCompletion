@@ -20,14 +20,15 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
     _foreground(foreground),
     _mask(mask) 
 {
-    Mat_<Vec3f> bgf, fgf;
-    background.convertTo(bgf, CV_32FC3);
-    foreground.convertTo(fgf, CV_32FC3);
+    Mat_<Vec3d> bgf, fgf;
+    background.convertTo(bgf, CV_64FC3);
+    foreground.convertTo(fgf, CV_64FC3);
 
-    pow((bgf - fgf), 2, _energy);
+    Mat energy;
+    pow((bgf - fgf), 2, energy);
     vector<Mat> channels;
-    split(_energy, channels);
-    _energy = channels[0] + channels[1] + channels[2];
+    split(energy, channels);
+    pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
 }
 
 MinSeam::~MinSeam() {
@@ -45,14 +46,39 @@ Mat MinSeam::getEnergyCum(unsigned int i) const {
     return _energyCum[i].first;
 }
 
-void MinSeam::computeMinimalSeam() const {
+void MinSeam::computeMinimalSeam(unsigned int index) const { //compute One Seam for One Energy Map
     vector<Point> mySeam;
-    for (int i = 0 ; i < _energyCum.size() ; i++){
-        // ernergyCum[i].at<double>(Point(
-        
+    Mat energyMap = _energyCum[index].first;
+    Point firstPoint = Point(_energyCum[index].second.x - 1, _energyCum[index].second.y);// LOL
+    Point lastPoint = Point(_energyCum[index].second.x + 1, _energyCum[index].second.y); // LOL 
+    Point currentPoint = lastPoint;
+    cv::Rect bounds(cv::Point(), energyMap.size());
+    while(currentPoint != firstPoint){
+        double valMin = energyMap.at<double>(currentPoint);
+        cout << currentPoint << ":"  << valMin << endl;
+
+        Point pointMinimum;
+        for (int i = -1; i <= 1; i++)
+            for (int j = -1; j <= 1; j++) {
+                Point potentialyNext(currentPoint.x + i, currentPoint.y + j);
+                // condition au bord
+                if (! bounds.contains(potentialyNext)) continue;
+                // test si actuel
+                if (!i && !j) continue;
+                // test si dans Probably Background
+                if ((int)_mask.at<uchar>(potentialyNext) != 170) continue;
+                if (energyMap.at<double>(potentialyNext) == -1.0) continue;
+                if (energyMap.at<double>(potentialyNext) <= valMin)
+                {
+                    valMin = energyMap.at<double>(potentialyNext);
+                    pointMinimum = potentialyNext;
+                }
+
+           }
+           mySeam.push_back(pointMinimum);
+           currentPoint = pointMinimum;
     }
-
-
+    _les_sims.push_back(mySeam);
 }
 
 

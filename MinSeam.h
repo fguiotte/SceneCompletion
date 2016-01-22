@@ -18,15 +18,15 @@ class MinSeam {
         cv::Mat getEnergy() const;
         cv::Mat getEnergyCum(unsigned int i) const;
         void computeEnergyCumMaps();
-        void computeMinimalSeam() const;
+        void computeMinimalSeam(unsigned int index) const;
 
     private:
         cv::Mat _background;
         cv::Mat _foreground;
         cv::Mat _mask;
-
+        std::vector<vector<cv::Point>> _les_sims;
     private:
-        cv::Mat_<cv::Vec3f> _energy;
+        cv::Mat_<double> _energy;
         std::vector<std::pair<cv::Mat, cv::Point > > _energyCum;
         void neighbouroude (const cv::Point & steam0, const cv::Point & steam1, const cv::Point & steamStart);
 };
