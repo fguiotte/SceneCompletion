@@ -72,14 +72,14 @@ void MinSeam::neighbouroude (Point steam0, Point steam1, Point steamStart) {
 
     cv::Rect bounds(cv::Point(), eCum.size());
 
-//    char window_name[] = "MinSeam demo";
-//    namedWindow(window_name, WINDOW_AUTOSIZE);
+    //char window_name[] = "MinSeam demo";
+    //namedWindow(window_name, WINDOW_AUTOSIZE);
     while (! pointStack.empty()) {
     Point currentPoint = pointStack.front();
     pointStack.pop();
 
-//    imshow(window_name, norm_0_255(eCum));
-//    waitKey(1);
+    //imshow(window_name, norm_0_255(eCum));
+    //waitKey(1);
 //
 //    // TODO: prendre en compte les filtres
 
@@ -91,8 +91,11 @@ void MinSeam::neighbouroude (Point steam0, Point steam1, Point steamStart) {
                 Point neighbour(currentPoint.x + i, currentPoint.y + j);
                 // condition au bord
                 if (! bounds.contains(currentPoint)) continue;
-                // test si déjà visité
-                if (eCum.at<double>(neighbour) != 0) continue; // Probably okay...
+                // test si déjà visité ou si sur steam
+                if (eCum.at<double>(neighbour) != 0 || eCum.at<double>(neighbour) == -1.0f) continue; // Probably okay...
+                // test si dans Probably Background
+                if ((int)_mask.at<uchar>(neighbour) != 170)
+                    continue;
                 eCum.at<double>(neighbour) = currentEnergy + _energy.at<double>(neighbour);
                 pointStack.push(neighbour);
             }

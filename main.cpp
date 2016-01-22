@@ -27,7 +27,7 @@ int main( int argc, char* argv[] ) {
     Mat bg, fg, mask;
     bg = imread("../img/demo/bg.jpg");
     fg = imread("../img/demo/fg.jpg");
-    mask = imread("../img/demo/mask.png");
+    mask = imread("../img/demo/mask.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask);
     Mat energy = ms.getEnergy();
@@ -36,13 +36,17 @@ int main( int argc, char* argv[] ) {
     namedWindow(window_name, WINDOW_AUTOSIZE);
     imshow(window_name, norm_0_255(energy));
 
+    char window_name2[] = "MinSeam mask";
+    namedWindow(window_name2, WINDOW_AUTOSIZE);
+    imshow(window_name2, mask);
+
     ms.computeEnergyCumMaps();
     Mat energyCum = ms.getEnergyCum(10);
     char window2_name[] = "Energy cum demo";
     namedWindow(window2_name, WINDOW_AUTOSIZE);
     Mat energyCumLog;
-    log(1 + energyCum, energyCumLog);
-    imshow(window2_name, norm_0_255(energyCumLog));
+    //log(1 + energyCum, energyCumLog);
+    imshow(window2_name, norm_0_255(energyCum));
 
     int quit = 0;
     while (quit != 113)
