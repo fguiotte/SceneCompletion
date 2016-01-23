@@ -4,6 +4,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 find_package(OpenCV REQUIRED)
 
+
+add_compile_options("$<$<CONFIG:DEBUG>:-Wall>")
+
 SET(SRC 
     main.cpp
     grabcut.cpp
