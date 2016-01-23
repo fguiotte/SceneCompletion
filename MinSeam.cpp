@@ -34,6 +34,11 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
 MinSeam::~MinSeam() {
 }
 
+void MinSeam::run() {
+    computeEnergyCumMaps();
+    computeMinimalSeams();
+}
+
 Mat MinSeam::getEnergy() const {
     return _energy;
 }
@@ -77,7 +82,6 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
 }
 
 cv::Mat MinSeam::showMinimalSeam(unsigned int index) {
-    computeMinimalSeam(index);
     Mat ecum = getEnergyCum(index);
     Mat rgb;
 
@@ -90,7 +94,7 @@ cv::Mat MinSeam::showMinimalSeam(unsigned int index) {
     channels.push_back(ecumDisp);
     merge(channels, rgb);
 
-    vector<Point> minSeam = _les_sims[index - index];
+    vector<Point> minSeam = _les_sims[index];
 
     for (vector<Point>::const_iterator it = minSeam.begin(); it != minSeam.end(); it++) {
         rgb.at<Vec3b>(*it)[2] = 255;
@@ -113,6 +117,13 @@ void MinSeam::computeEnergyCumMaps() {
     }
 }
 
+void MinSeam::computeMinimalSeams() {
+    for (int i = 0; i < _energyCum.size(); i++) {
+        cout << "Seam [" << i + 1 << "/" << _energyCum.size() << "]" << endl;
+        computeMinimalSeam(i);
+    }
+}
+   
 void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const Point & steamStart) { 
     // fonction récursive qui parcours le voisinage de chaque pixel et calcul l'énergie cumulée, stockée dans eCum   
     Mat eCum;

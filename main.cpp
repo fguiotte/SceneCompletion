@@ -40,7 +40,8 @@ int main( int argc, char* argv[] ) {
     namedWindow(window_name2, WINDOW_AUTOSIZE);
     imshow(window_name2, mask);
 
-    ms.computeEnergyCumMaps();
+    ms.run();
+
     Mat energyCum = ms.getEnergyCum(10);
     char window2_name[] = "Energy cum demo";
     namedWindow(window2_name, WINDOW_AUTOSIZE);
