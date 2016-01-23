@@ -29,6 +29,8 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
     vector<Mat> channels;
     split(energy, channels);
     pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
+
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
 }
 
 MinSeam::~MinSeam() {
@@ -61,7 +63,6 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
     mySeam.push_back(lastPoint);
     while(currentPoint != firstPoint){
         double valMin = energyMap.at<double>(currentPoint);
-
         Point pointMinimum;
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++) {
@@ -118,7 +119,7 @@ void MinSeam::computeEnergyCumMaps() {
 }
 
 void MinSeam::computeMinimalSeams() {
-    for (int i = 0; i < _energyCum.size(); i++) {
+    for (unsigned int i = 0; i < _energyCum.size(); i++) {
         cout << "Seam [" << i + 1 << "/" << _energyCum.size() << "]" << endl;
         computeMinimalSeam(i);
     }
@@ -132,7 +133,7 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
     deque<Point> pointStack;
 
     Point firstPoint(steamStart.x - 1, steamStart.y); // We start at the left of the steam
-    eCum.at<double>(firstPoint) = _energy.at<float>(firstPoint);
+    eCum.at<double>(firstPoint) = _energy.at<double>(firstPoint);
     pointStack.push_back(firstPoint);
 
     cv::Rect bounds(cv::Point(), eCum.size());
@@ -156,11 +157,13 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
                 smartEnergyCum(pointStack, eCum, neighbour);
             }
     }
+
     _energyCum.push_back(pair<Mat, Point>(eCum, steamStart));
 }
 
 void MinSeam::initSteam(Mat & energy, const Point & steamBegin, const Point & steamEnd) const {
     energy.create(_energy.size(), CV_64FC1);
+    energy = Scalar(0);
     for (int i = steamBegin.y ; i < steamEnd.y ; i++)
         energy.at<double>(Point(steamBegin.x,i)) = -1;
 }
