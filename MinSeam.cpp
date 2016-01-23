@@ -60,20 +60,14 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
         Point pointMinimum;
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++) {
-                Point potentialyNext(currentPoint.x + i, currentPoint.y + j);
-                // condition au bord
-                if (! bounds.contains(potentialyNext)) continue;
-                // test si actuel
                 if (!i && !j) continue;
-                // test si dans Probably Background
+                Point potentialyNext(currentPoint.x + i, currentPoint.y + j);
+                if (! bounds.contains(potentialyNext)) continue;
                 if ((int)_mask.at<uchar>(potentialyNext) != 170) continue;
                 if (energyMap.at<double>(potentialyNext) == -1.0) continue;
-                if (energyMap.at<double>(potentialyNext) <= valMin)
-                {
-                    valMin = energyMap.at<double>(potentialyNext);
-                    pointMinimum = potentialyNext;
-                }
-
+                if (energyMap.at<double>(potentialyNext) > valMin) continue;
+                valMin = energyMap.at<double>(potentialyNext);
+                pointMinimum = potentialyNext;
            }
            mySeam.push_back(pointMinimum);
            currentPoint = pointMinimum;
@@ -111,12 +105,14 @@ void MinSeam::computeEnergyCumMaps() {
     Point steam0(895, 708); // premier pixel du segment bord du patch ->  couture, que l'on appelle steam (Start Sim) 
     Point steam1(895, 740); // dernier pixel 
 
-   for (int i = steam0.y; i < steam1.y; i++) { //  Pour chaque pixel de steam
+    cout << "There is " << steam1.y - steam0.y << " energy maps to compute: "<< endl;
+    for (int i = steam0.y; i < steam1.y; i++) { //  Pour chaque pixel de steam
         Point steamStart(steam0.x, i);
+        cout << "Map [" << i - steam0.y + 1 << "/" << steam1.y - steam0.y << "]" << endl;
         neighbouroude(steam0, steam1, steamStart); // Init de eCum dans neighbouroude; duplique le for -1 dedans;
     }
 }
-   
+
 void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const Point & steamStart) { 
     // fonction récursive qui parcours le voisinage de chaque pixel et calcul l'énergie cumulée, stockée dans eCum   
     Mat eCum;
