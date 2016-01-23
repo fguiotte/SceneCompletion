@@ -56,7 +56,6 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
     mySeam.push_back(lastPoint);
     while(currentPoint != firstPoint){
         double valMin = energyMap.at<double>(currentPoint);
-        cout << currentPoint << ":"  << valMin << endl;
 
         Point pointMinimum;
         for (int i = -1; i <= 1; i++)
@@ -103,7 +102,6 @@ cv::Mat MinSeam::showMinimalSeam(unsigned int index) {
         rgb.at<Vec3b>(*it)[2] = 255;
         rgb.at<Vec3b>(*it)[1] = 0;
         rgb.at<Vec3b>(*it)[0] = 0;
-        cout << *it << endl;
     }
 
     return rgb;
@@ -128,24 +126,13 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
 
     Point firstPoint(steamStart.x - 1, steamStart.y); // We start at the left of the steam
     eCum.at<double>(firstPoint) = _energy.at<float>(firstPoint);
-
-    cout << "Energie de départ : " <<  eCum.at<double>(firstPoint) << endl;
-
     pointStack.push_back(firstPoint);
 
     cv::Rect bounds(cv::Point(), eCum.size());
 
-   // char window_name[] = "MinSeam demo";
-   // namedWindow(window_name, WINDOW_AUTOSIZE);
     while (! pointStack.empty()) {
-    Point currentPoint = pointStack.front();
-    pointStack.pop_front();
-
-    //imshow(window_name, norm_0_255(eCum));
-   // waitKey(1);
-//
-//    // TODO: prendre en compte les filtres
-
+        Point currentPoint = pointStack.front();
+        pointStack.pop_front();
         double currentEnergy = eCum.at<double>(currentPoint);
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++) {
@@ -154,24 +141,19 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
                 Point neighbour(currentPoint.x + i, currentPoint.y + j);
                 // condition au bord
                 if (! bounds.contains(currentPoint)) continue;
-                // test si déjà visité ou si sur steam
-                if (eCum.at<double>(neighbour) != 0) continue; // Probably okay...
-                if (eCum.at<double>(neighbour) == -1.0) continue;
                 // test si dans Probably Background
-                if ((int)_mask.at<uchar>(neighbour) != 170)
-                    continue;
+                if ((int)_mask.at<uchar>(neighbour) != 170) continue;
+                // test si déjà visité ou si sur steam
+                if (eCum.at<double>(neighbour) != 0) continue;
                 eCum.at<double>(neighbour) = currentEnergy + _energy.at<double>(neighbour);
                 smartEnergyCum(pointStack, eCum, neighbour);
-                //pointStack.push_back(neighbour);
             }
     }
-
     _energyCum.push_back(pair<Mat, Point>(eCum, steamStart));
 }
 
 void MinSeam::initSteam(Mat & energy, const Point & steamBegin, const Point & steamEnd) const {
     energy.create(_energy.size(), CV_64FC1);
-    energy.setTo(0);
     for (int i = steamBegin.y ; i < steamEnd.y ; i++)
         energy.at<double>(Point(steamBegin.x,i)) = -1;
 }
