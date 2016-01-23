@@ -44,16 +44,18 @@ int main( int argc, char* argv[] ) {
     Mat energyCum = ms.getEnergyCum(10);
     char window2_name[] = "Energy cum demo";
     namedWindow(window2_name, WINDOW_AUTOSIZE);
-    Mat energyCumLog;
-    //log(1 + energyCum, energyCumLog);
     Mat energyDisplay;
-    normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC1);
-    //imshow(window2_name, norm_0_255(energyCum));
+    normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC3);
     imshow(window2_name, energyDisplay);
 
-    imwrite("test.png", energyDisplay);
+    // Show min seam
+    Mat minSeam = ms.showMinimalSeam(10);
+    char w_minseam[] = "Minimal seam";
+    namedWindow(w_minseam, WINDOW_AUTOSIZE);
+    imshow(w_minseam, minSeam);
 
-    ms.computeMinimalSeam(10);
+    imwrite("minseam_moche.png", minSeam);
+
     int quit = 0;
     while (quit != 113)
         quit = waitKey();

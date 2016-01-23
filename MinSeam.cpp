@@ -46,13 +46,14 @@ Mat MinSeam::getEnergyCum(unsigned int i) const {
     return _energyCum[i].first;
 }
 
-void MinSeam::computeMinimalSeam(unsigned int index) const { //compute One Seam for One Energy Map
+void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for One Energy Map
     vector<Point> mySeam;
     Mat energyMap = _energyCum[index].first;
     Point firstPoint = Point(_energyCum[index].second.x - 1, _energyCum[index].second.y);// LOL
     Point lastPoint = Point(_energyCum[index].second.x + 1, _energyCum[index].second.y); // LOL 
     Point currentPoint = lastPoint;
     cv::Rect bounds(cv::Point(), energyMap.size());
+    mySeam.push_back(lastPoint);
     while(currentPoint != firstPoint){
         double valMin = energyMap.at<double>(currentPoint);
         cout << currentPoint << ":"  << valMin << endl;
@@ -78,10 +79,35 @@ void MinSeam::computeMinimalSeam(unsigned int index) const { //compute One Seam 
            mySeam.push_back(pointMinimum);
            currentPoint = pointMinimum;
     }
+    mySeam.push_back(_energyCum[index].second);
     _les_sims.push_back(mySeam);
 }
 
+cv::Mat MinSeam::showMinimalSeam(unsigned int index) {
+    computeMinimalSeam(index);
+    Mat ecum = getEnergyCum(index);
+    Mat rgb;
 
+    Mat ecumDisp;
+    normalize(ecum, ecumDisp, 0, 255, NORM_MINMAX, CV_8UC1);
+
+    vector<Mat> channels;
+    channels.push_back(ecumDisp);
+    channels.push_back(ecumDisp);
+    channels.push_back(ecumDisp);
+    merge(channels, rgb);
+
+    vector<Point> minSeam = _les_sims[index - index];
+
+    for (vector<Point>::const_iterator it = minSeam.begin(); it != minSeam.end(); it++) {
+        rgb.at<Vec3b>(*it)[2] = 255;
+        rgb.at<Vec3b>(*it)[1] = 0;
+        rgb.at<Vec3b>(*it)[0] = 0;
+        cout << *it << endl;
+    }
+
+    return rgb;
+}
 
 void MinSeam::computeEnergyCumMaps() {
     Point steam0(895, 708); // premier pixel du segment bord du patch ->  couture, que l'on appelle steam (Start Sim) 
