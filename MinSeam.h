@@ -10,6 +10,7 @@
 #define __MINSEAM_H__
 #include <opencv2/core/core.hpp>
 #include <vector>
+#include <deque>
 
 class MinSeam {
     public:
@@ -31,6 +32,7 @@ class MinSeam {
         cv::Mat_<double> _energy;
         std::vector<std::pair<cv::Mat, cv::Point > > _energyCum;
         void neighbouroude (const cv::Point & steam0, const cv::Point & steam1, const cv::Point & steamStart);
+        void smartEnergyCum(std::deque<cv::Point> & stack, const cv::Mat & values, const cv::Point & point) const;
 };
 
 #endif /* __MINSEAM_H__ */

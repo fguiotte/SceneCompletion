@@ -129,12 +129,12 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
 
     Point firstPoint(steamStart.x - 1, steamStart.y); // We start at the left of the steam
 
-    queue<Point> pointStack;
+    deque<Point> pointStack;
     eCum.at<double>(firstPoint) = _energy.at<float>(firstPoint);
 
     cout << "Energie de départ : " <<  eCum.at<double>(firstPoint) << endl;
 
-    pointStack.push(firstPoint);
+    pointStack.push_back(firstPoint);
 
     cv::Rect bounds(cv::Point(), eCum.size());
 
@@ -142,7 +142,7 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
    // namedWindow(window_name, WINDOW_AUTOSIZE);
     while (! pointStack.empty()) {
     Point currentPoint = pointStack.front();
-    pointStack.pop();
+    pointStack.pop_front();
 
     //imshow(window_name, norm_0_255(eCum));
    // waitKey(1);
@@ -164,7 +164,8 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
                 if ((int)_mask.at<uchar>(neighbour) != 170)
                     continue;
                 eCum.at<double>(neighbour) = currentEnergy + _energy.at<double>(neighbour);
-                pointStack.push(neighbour);
+                smartEnergyCum(pointStack, eCum, neighbour);
+                //pointStack.push_back(neighbour);
             }
     }
 
@@ -175,4 +176,14 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
 //    // TODO : pop le candidat traité
 //    eCum = neighbouroude(steam0, steam1, v);
 //    if (v == steamStart) return eCum;
+}
+
+void MinSeam::smartEnergyCum(deque<Point> & stack, const Mat & values, const Point & point) const {
+    //if (stack.empty()) stack.push_back(point);
+    for (deque<Point>::iterator it = stack.begin(); it != stack.end(); it++)
+        if (values.at<double>(point) < values.at<double>(*it)) {
+            stack.insert(it, point);
+            return;
+        }
+    stack.push_back(point);
 }
