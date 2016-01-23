@@ -121,15 +121,12 @@ void MinSeam::computeEnergyCumMaps() {
    
 void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const Point & steamStart) { 
     // fonction récursive qui parcours le voisinage de chaque pixel et calcul l'énergie cumulée, stockée dans eCum   
-    Mat_<double> eCum(_energy.rows, _energy.cols, CV_64FC1);
-    eCum.setTo(0);
-    for (int i = steam0.y ; i < steam1.y ; i++)
-        eCum.at<double>(Point(steam0.x,i)) = -1;
-
-
-    Point firstPoint(steamStart.x - 1, steamStart.y); // We start at the left of the steam
+    Mat eCum;
+    initSteam(eCum, steam0, steam1);
 
     deque<Point> pointStack;
+
+    Point firstPoint(steamStart.x - 1, steamStart.y); // We start at the left of the steam
     eCum.at<double>(firstPoint) = _energy.at<float>(firstPoint);
 
     cout << "Energie de départ : " <<  eCum.at<double>(firstPoint) << endl;
@@ -170,16 +167,16 @@ void MinSeam::neighbouroude (const Point & steam0, const Point & steam1, const P
     }
 
     _energyCum.push_back(pair<Mat, Point>(eCum, steamStart));
+}
 
-//         
-//
-//    // TODO : pop le candidat traité
-//    eCum = neighbouroude(steam0, steam1, v);
-//    if (v == steamStart) return eCum;
+void MinSeam::initSteam(Mat & energy, const Point & steamBegin, const Point & steamEnd) const {
+    energy.create(_energy.size(), CV_64FC1);
+    energy.setTo(0);
+    for (int i = steamBegin.y ; i < steamEnd.y ; i++)
+        energy.at<double>(Point(steamBegin.x,i)) = -1;
 }
 
 void MinSeam::smartEnergyCum(deque<Point> & stack, const Mat & values, const Point & point) const {
-    //if (stack.empty()) stack.push_back(point);
     for (deque<Point>::iterator it = stack.begin(); it != stack.end(); it++)
         if (values.at<double>(point) < values.at<double>(*it)) {
             stack.insert(it, point);
