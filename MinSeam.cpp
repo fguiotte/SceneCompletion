@@ -82,7 +82,20 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
     _les_sims.push_back(mySeam);
 }
 
-unsigned int MinSeam::getMinSeamIndex() const{}
+unsigned int MinSeam::getMinSeamIndex() const{
+    double energyMin = numeric_limits<double>::max();
+    unsigned int energyMinIndex;
+
+    for (vector<pair<Mat, Point> >::const_iterator it = _energyCum.begin(); it != _energyCum.end(); it++) {
+        Point endSeam(it->second.x + 1, it->second.y);
+        if (it->first.at<double>(endSeam) < energyMin) {
+            energyMin = it->first.at<double>(endSeam);
+            energyMinIndex = it - _energyCum.begin();
+        }
+    }
+
+    return energyMinIndex;
+}
 
 cv::Mat MinSeam::showSeam(unsigned int index) const {
     Mat ecum = getEnergyCum(index);

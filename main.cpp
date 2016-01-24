@@ -50,7 +50,9 @@ int main( int argc, char* argv[] ) {
     imshow(window2_name, energyDisplay);
 
     // Show min seam
-    Mat minSeam = ms.showSeam(10);
+    unsigned int minSeamIndex = ms.getMinSeamIndex();
+    cout << "Min seam is " << minSeamIndex << endl;
+    Mat minSeam = ms.showSeam(minSeamIndex);
     char w_minseam[] = "Minimal seam";
     namedWindow(w_minseam, WINDOW_AUTOSIZE);
     imshow(w_minseam, minSeam);
