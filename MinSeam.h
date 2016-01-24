@@ -18,8 +18,9 @@ class MinSeam {
         virtual ~MinSeam();
         void run();
         cv::Mat getEnergy() const;
-        cv::Mat getEnergyCum(unsigned int i) const;
-        cv::Mat showMinimalSeam(unsigned int index);
+        cv::Mat getEnergyCum(unsigned int i = 0) const;
+        cv::Mat showSeam(unsigned int index = 0) const;
+        unsigned int getMinSeamIndex() const;
 
     private:
         cv::Mat _background;

@@ -82,7 +82,9 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
     _les_sims.push_back(mySeam);
 }
 
-cv::Mat MinSeam::showMinimalSeam(unsigned int index) {
+unsigned int MinSeam::getMinSeamIndex() const{}
+
+cv::Mat MinSeam::showSeam(unsigned int index) const {
     Mat ecum = getEnergyCum(index);
     Mat rgb;
 
