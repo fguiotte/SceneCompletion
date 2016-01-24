@@ -37,9 +37,14 @@ MinSeam::~MinSeam() {
 }
 
 void MinSeam::run() {
+    cout << "Compute cumulative energy maps" << endl;
     computeEnergyCumMaps();
+    cout << "Compute seams" << endl;
     computeMinimalSeams();
+    cout << "Buils masks" << endl;
     buildMasks();
+    cout << "Merge layers" << endl;
+    mergeLayers();
 }
 
 Mat MinSeam::getEnergy() const {
@@ -222,7 +227,7 @@ Mat MinSeam::getBinMask() const {
     foregroundStack.push(getAMaskPoint());
     binMask.at<uchar>(foregroundStack.front()) = 1;
 
-    int qwe;
+    //int qwe;
 
     while (! foregroundStack.empty()) {
         Point currentPoint = foregroundStack.front();
@@ -241,11 +246,11 @@ Mat MinSeam::getBinMask() const {
                 binMask.at<uchar>(neighbour) = 1;
                 foregroundStack.push(neighbour);
             }
-        qwe++;
-        if (qwe%100 == 0) {
-            imshow("tmp", norm_0_255(binMask));
-            waitKey(1);
-        }
+        //qwe++;
+        //if (qwe%100 == 0) {
+        //    imshow("tmp", norm_0_255(binMask));
+        //    waitKey(1);
+        //}
     }
 
     return binMask;
@@ -260,6 +265,15 @@ Point MinSeam::getAMaskPoint() const {
 }
 
 void MinSeam::buildMasks() {
-    getBinMask().copyTo(_fgMask);
-    _bgMask = _fgMask == 0;
+    getBinMask().copyTo(_bgMask);
+    _fgMask = _bgMask == 0;
+}
+
+void MinSeam::mergeLayers() {
+    _foreground.copyTo(_result, _bgMask);
+    _background.copyTo(_result, _fgMask);
+}
+
+Mat MinSeam::getResult() const {
+    return _result;
 }

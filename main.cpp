@@ -30,49 +30,52 @@ int main( int argc, char* argv[] ) {
     mask = imread("../img/demo/mask.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask);
-    Mat energy = ms.getEnergy();
-
-    char window_name[] = "MinSeam demo";
-    namedWindow(window_name, WINDOW_AUTOSIZE);
-    imshow(window_name, norm_0_255(energy));
-    imwrite("energy.png", norm_0_255(energy));
-
-    char window_name2[] = "MinSeam mask";
-    namedWindow(window_name2, WINDOW_AUTOSIZE);
-    imshow(window_name2, mask);
-
     ms.run();
+    imshow("Tadaa", ms.getResult());
+    waitKey(0);
+    //Mat energy = ms.getEnergy();
 
-    Mat energyCum = ms.getEnergyCum(10);
-    char window2_name[] = "Energy cum demo";
-    namedWindow(window2_name, WINDOW_AUTOSIZE);
-    Mat energyDisplay;
-    normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC3);
-    imshow(window2_name, energyDisplay);
+    //char window_name[] = "MinSeam demo";
+    //namedWindow(window_name, WINDOW_AUTOSIZE);
+    //imshow(window_name, norm_0_255(energy));
+    //imwrite("energy.png", norm_0_255(energy));
 
-    // Show all seams
-    imshow("All the seams", ms.showSeams());
-    imwrite("all_seams.png", ms.showSeams());
+    //char window_name2[] = "MinSeam mask";
+    //namedWindow(window_name2, WINDOW_AUTOSIZE);
+    //imshow(window_name2, mask);
 
-    // Show min seam
-    unsigned int minSeamIndex = ms.getMinSeamIndex();
-    cout << "Min seam is " << minSeamIndex << endl;
-    Mat minSeam = ms.showSeam(minSeamIndex);
-    char w_minseam[] = "Minimal seam";
-    namedWindow(w_minseam, WINDOW_AUTOSIZE);
-    imshow(w_minseam, minSeam);
+    //ms.run();
 
-    imwrite("minseam_moche.png", minSeam);
-    imwrite("energie_cumulée.png", norm_0_255(ms.getEnergyCum(10)));
+    //Mat energyCum = ms.getEnergyCum(10);
+    //char window2_name[] = "Energy cum demo";
+    //namedWindow(window2_name, WINDOW_AUTOSIZE);
+    //Mat energyDisplay;
+    //normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC3);
+    //imshow(window2_name, energyDisplay);
 
-    imshow("binary mask", norm_0_255(ms.getBinMask()));
+    //// Show all seams
+    //imshow("All the seams", ms.showSeams());
+    //imwrite("all_seams.png", ms.showSeams());
 
-    int quit = 0;
-    while (quit != 113)
-        quit = waitKey();
+    //// Show min seam
+    //unsigned int minSeamIndex = ms.getMinSeamIndex();
+    //cout << "Min seam is " << minSeamIndex << endl;
+    //Mat minSeam = ms.showSeam(minSeamIndex);
+    //char w_minseam[] = "Minimal seam";
+    //namedWindow(w_minseam, WINDOW_AUTOSIZE);
+    //imshow(w_minseam, minSeam);
 
-    cout << "Done." << endl;
-    return 0;
+    //imwrite("minseam_moche.png", minSeam);
+    //imwrite("energie_cumulée.png", norm_0_255(ms.getEnergyCum(10)));
+
+    //imshow("binary mask", norm_0_255(ms.getBinMask()));
+
+    //int quit = 0;
+    //while (quit != 113)
+    //    quit = waitKey();
+
+    //cout << "Done." << endl;
+    //return 0;
 }
 
 int old_main( int argc, char* argv[] )
