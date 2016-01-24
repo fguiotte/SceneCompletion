@@ -37,6 +37,8 @@ class MinSeam {
     private:
         cv::Mat_<double> _energy;
         std::vector<std::pair<cv::Mat, cv::Point > > _energyCum;
+
+    private:
         void neighbouroude (const cv::Point & steam0, const cv::Point & steam1, const cv::Point & steamStart);
         void smartEnergyCum(std::deque<cv::Point> & stack, const cv::Mat & values, const cv::Point & point) const;
         void initSteam(cv::Mat & energy, const cv::Point & steamBegin, const cv::Point & steamEnd) const;
