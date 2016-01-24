@@ -211,3 +211,52 @@ void MinSeam::smartEnergyCum(deque<Point> & stack, const Mat & values, const Poi
         }
     stack.push_back(point);
 }
+
+Mat MinSeam::getBinMask() const {
+    vector<Point> minSeam = _les_sims[getMinSeamIndex()];
+    Mat binMask(_mask.size(), CV_8UC1);
+    binMask = Scalar(0);
+
+    queue<Point> foregroundStack;
+    foregroundStack.push(getAMaskPoint());
+    binMask.at<uchar>(foregroundStack.front()) = 1;
+
+    int qwe;
+
+    while (! foregroundStack.empty()) {
+        Point currentPoint = foregroundStack.front();
+        foregroundStack.pop();
+        for (int i = -1; i <= 1; i++)
+            for (int j = -1; j <= 1; j++) {
+                if (abs(i) == abs(j)) continue;
+                Point neighbour(currentPoint.x + i, currentPoint.y + j);
+                if (binMask.at<uchar>(neighbour) == 1) continue;
+                if (_mask.at<uchar>(neighbour) == 255) {
+                    binMask.at<uchar>(neighbour) = 1;
+                    foregroundStack.push(neighbour);
+                    continue;
+                }
+                if (find(minSeam.begin(), minSeam.end(), neighbour) != minSeam.end()) continue; // TODO: Hurr durr
+                binMask.at<uchar>(neighbour) = 1;
+                foregroundStack.push(neighbour);
+            }
+        qwe++;
+        if (qwe%100 == 0) {
+            imshow("tmp", norm_0_255(binMask));
+            waitKey(1);
+        }
+    }
+
+    return binMask;
+}
+
+
+Point MinSeam::getAMaskPoint() const {
+    for (int i = 0; i < _mask.cols; i++)
+        for (int j = 0; j < _mask.rows; j++)
+            if (_mask.at<uchar>(Point(i, j)) == 255) return Point(i, j);
+    return Point();
+}
+
+void MinSeam::buildMasks() {
+}

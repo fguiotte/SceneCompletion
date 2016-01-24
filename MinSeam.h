@@ -23,10 +23,13 @@ class MinSeam {
         cv::Mat showSeams() const;
         unsigned int getMinSeamIndex() const;
 
+        cv::Mat getBinMask() const;
     private:
         cv::Mat _background;
         cv::Mat _foreground;
         cv::Mat _mask;
+        cv::Mat _fgMask;
+        cv::Mat _bgMask;
         std::vector<std::vector<cv::Point> > _les_sims;
 
     private:
@@ -38,6 +41,8 @@ class MinSeam {
         void computeEnergyCumMaps();
         void computeMinimalSeam(unsigned int index);
         void computeMinimalSeams();
+        cv::Point getAMaskPoint() const;
+        void buildMasks();
 };
 
 #endif /* __MINSEAM_H__ */

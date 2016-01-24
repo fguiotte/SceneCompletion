@@ -35,6 +35,7 @@ int main( int argc, char* argv[] ) {
     char window_name[] = "MinSeam demo";
     namedWindow(window_name, WINDOW_AUTOSIZE);
     imshow(window_name, norm_0_255(energy));
+    imwrite("energy.png", norm_0_255(energy));
 
     char window_name2[] = "MinSeam mask";
     namedWindow(window_name2, WINDOW_AUTOSIZE);
@@ -51,6 +52,7 @@ int main( int argc, char* argv[] ) {
 
     // Show all seams
     imshow("All the seams", ms.showSeams());
+    imwrite("all_seams.png", ms.showSeams());
 
     // Show min seam
     unsigned int minSeamIndex = ms.getMinSeamIndex();
@@ -61,6 +63,9 @@ int main( int argc, char* argv[] ) {
     imshow(w_minseam, minSeam);
 
     imwrite("minseam_moche.png", minSeam);
+    imwrite("energie_cumulée.png", norm_0_255(ms.getEnergyCum(10)));
+
+    imshow("binary mask", norm_0_255(ms.getBinMask()));
 
     int quit = 0;
     while (quit != 113)
