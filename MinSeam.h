@@ -20,6 +20,7 @@ class MinSeam {
         cv::Mat getEnergy() const;
         cv::Mat getEnergyCum(unsigned int i = 0) const;
         cv::Mat showSeam(unsigned int index = 0) const;
+        cv::Mat showSeams() const;
         unsigned int getMinSeamIndex() const;
 
     private:

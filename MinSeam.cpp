@@ -82,7 +82,7 @@ void MinSeam::computeMinimalSeam(unsigned int index) { //compute One Seam for On
     _les_sims.push_back(mySeam);
 }
 
-unsigned int MinSeam::getMinSeamIndex() const{
+unsigned int MinSeam::getMinSeamIndex() const {
     double energyMin = numeric_limits<double>::max();
     unsigned int energyMinIndex;
 
@@ -95,6 +95,26 @@ unsigned int MinSeam::getMinSeamIndex() const{
     }
 
     return energyMinIndex;
+}
+
+cv::Mat MinSeam::showSeams() const {
+    Mat bg, rgb;
+
+    normalize(_energy, bg, 0, 255, NORM_MINMAX, CV_8UC1);
+
+    vector<Mat> channels;
+    channels.push_back(bg);
+    channels.push_back(bg);
+    channels.push_back(bg);
+    merge(channels, rgb);
+
+    vector<Point> minSeam = _les_sims[0];
+
+    for (vector<vector<Point> >::const_iterator itseam = _les_sims.begin(); itseam != _les_sims.end(); itseam++)
+        for (vector<Point>::const_iterator it = itseam->begin(); it != itseam->end(); it++)
+            rgb.at<Vec3b>(*it) = Vec3b(0, 255, 0); 
+
+    return rgb;
 }
 
 cv::Mat MinSeam::showSeam(unsigned int index) const {

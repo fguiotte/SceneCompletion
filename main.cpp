@@ -49,6 +49,9 @@ int main( int argc, char* argv[] ) {
     normalize(energyCum, energyDisplay, 0, 255, NORM_MINMAX, CV_8UC3);
     imshow(window2_name, energyDisplay);
 
+    // Show all seams
+    imshow("All the seams", ms.showSeams());
+
     // Show min seam
     unsigned int minSeamIndex = ms.getMinSeamIndex();
     cout << "Min seam is " << minSeamIndex << endl;
