@@ -39,6 +39,7 @@ MinSeam::~MinSeam() {
 void MinSeam::run() {
     computeEnergyCumMaps();
     computeMinimalSeams();
+    buildMasks();
 }
 
 Mat MinSeam::getEnergy() const {
@@ -259,4 +260,6 @@ Point MinSeam::getAMaskPoint() const {
 }
 
 void MinSeam::buildMasks() {
+    getBinMask().copyTo(_fgMask);
+    _bgMask = _fgMask == 0;
 }
