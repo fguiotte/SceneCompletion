@@ -18,9 +18,9 @@ using namespace cv;
 
 GCApplication gcapp;
 
-void demo1();
-void demo2();
-void demo3();
+void demo1(int etype = 0);
+void demo2(int etype = 0);
+void demo3(int etype = 0);
 
 static void on_mouse(int event, int x, int y, int flags, void* param )
 {
@@ -28,20 +28,29 @@ static void on_mouse(int event, int x, int y, int flags, void* param )
 }
 
 int main( int argc, char* argv[] ) {
-    demo1();
-    demo2();
-    demo3();
+    int etype;
+    if (argc == 2) {
+        string a(argv[1]);
+        if (a == "basic") etype = 0;
+        if (a == "sobel") etype = 1;
+        if (a == "basiclab") etype = 2;
+    } else
+        etype = 0;
+
+    demo1(etype);
+    demo2(etype);
+    demo3(etype);
 
     return 0;
 }
 
-void demo1() {
+void demo1(int etype) {
     Mat bg, fg, mask;
     bg = imread("../img/demo/bg.jpg");
     fg = imread("../img/demo/fg.jpg");
     mask = imread("../img/demo/mask.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
+    MinSeam ms(bg, fg, mask, etype);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());
@@ -50,13 +59,13 @@ void demo1() {
     waitKey(0);
 }
 
-void demo2() {
+void demo2(int etype) {
     Mat bg, fg, mask;
     bg = imread("../img/demo2/cible2.jpg");
     fg = imread("../img/demo2/source2.jpg");
     mask = imread("../img/demo2/mask2b.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
+    MinSeam ms(bg, fg, mask, etype);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());
@@ -65,13 +74,13 @@ void demo2() {
     waitKey(0);
 }
 
-void demo3() {
+void demo3(int etype) {
     Mat bg, fg, mask;
     bg = imread("../img/demo2/cible.jpg");
     fg = imread("../img/demo2/source.jpg");
     mask = imread("../img/demo2/mask.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
+    MinSeam ms(bg, fg, mask, etype);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());

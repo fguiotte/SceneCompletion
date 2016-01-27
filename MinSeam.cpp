@@ -35,7 +35,7 @@ void MinSeam::run() {
     computeEnergyCumMaps();
     cout << "Compute seams" << endl;
     computeMinimalSeams();
-    cout << "Buils masks" << endl;
+    cout << "Build masks" << endl;
     buildMasks();
     cout << "Merge layers" << endl;
     mergeLayers();
@@ -315,7 +315,7 @@ void MinSeam::initEnergyBasic() {
     split(energy, channels);
     pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
 
-    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC1);
 }
 
 void MinSeam::initEnergyBasicLab() {
@@ -332,7 +332,7 @@ void MinSeam::initEnergyBasicLab() {
     split(energy, channels);
     pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
 
-    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC1);
 }
 
 void MinSeam::initEnergySobel() {
@@ -361,7 +361,5 @@ void MinSeam::initEnergySobel() {
     Mat fgrad = fgradx2 + fgrady2;
 
     _energy = abs(fgrad - bgrad);
-
-    imshow("Energy WIP", norm_0_255(_energy));
-    waitKey(0);
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC1);
 }
