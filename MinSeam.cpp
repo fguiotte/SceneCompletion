@@ -8,6 +8,7 @@
 
 #include "MinSeam.h"
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <queue>
 #include <limits>
@@ -15,23 +16,13 @@
 using namespace cv;
 using namespace std;
 
-MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask) :
+MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask, int energyType) :
     _background(background),
     _foreground(foreground),
     _mask(mask) 
 {
-    Mat_<Vec3d> bgf, fgf;
-    background.convertTo(bgf, CV_64FC3);
-    foreground.convertTo(fgf, CV_64FC3);
-
-    Mat energy;
-    pow((bgf - fgf), 2, energy);
-    vector<Mat> channels;
-    split(energy, channels);
-    pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
-
-    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
-
+    if (energyType == MS_BASIC_E) initEnergyBasic();
+    if (energyType == MS_SOBEL_E) initEnergySobel();
     run();
 }
 
@@ -310,4 +301,45 @@ void MinSeam::getSteamPoints(Point & steamBegin, Point & steamEnd) const {
             }
         }
     }
+}
+
+void MinSeam::initEnergyBasic() {
+    Mat_<Vec3d> bgf, fgf;
+    _background.convertTo(bgf, CV_64FC3);
+    _foreground.convertTo(fgf, CV_64FC3);
+
+    Mat energy;
+    pow((bgf - fgf), 2, energy);
+    vector<Mat> channels;
+    split(energy, channels);
+    pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
+
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
+}
+
+void MinSeam::initEnergySobel() {
+    Mat_<Vec3d> bgf, fgf;
+    cvtColor(_background, bgf, CV_BGR2Lab);
+    cvtColor(_foreground, fgf, CV_BGR2Lab);
+    bgf.convertTo(bgf, CV_64FC3);
+    fgf.convertTo(fgf, CV_64FC3);
+
+    vector<Mat> labcompb, labcompf;
+    split(bgf, labcompb);
+    split(fgf, labcompf);
+
+    Mat bgradx, bgrady, fgradx, fgrady;
+    Sobel(labcompb[0], bgradx, 1, 0, CV_SCHARR);
+    Sobel(labcompb[0], bgrady, 0, 1, CV_SCHARR);
+    Sobel(labcompf[0], fgradx, 1, 0, CV_SCHARR);
+    Sobel(labcompf[0], fgrady, 0, 1, CV_SCHARR);
+
+    Mat bgradx2, bgrady2, fgradx2, fgrady2; 
+    pow(bgradx, 2, bgradx2); pow(bgrady, 2, bgrady2);
+    pow(fgradx, 2, fgradx2); pow(fgrady, 2, fgrady2);
+
+    Mat bgrad = bgradx + bgrady;
+    Mat fgrad = fgradx + fgrady;
+
+    _energy = fgrad - bgrad;
 }

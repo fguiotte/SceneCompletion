@@ -43,6 +43,9 @@ void demo1() {
 
     MinSeam ms(bg, fg, mask);
 
+    imshow("Energy", ms.getEnergy());
+    imshow("Seam", ms.showSeams());
+
     imshow("Tadaa", ms.getResult());
     waitKey(0);
 }
@@ -55,6 +58,9 @@ void demo2() {
 
     MinSeam ms(bg, fg, mask);
 
+    imshow("Energy", ms.getEnergy());
+    imshow("Seam", ms.showSeams());
+
     imshow("Tadaa", ms.getResult());
     waitKey(0);
 }
@@ -66,6 +72,9 @@ void demo3() {
     mask = imread("../img/demo2/mask.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask);
+
+    imshow("Energy", ms.getEnergy());
+    imshow("Seam", ms.showSeams());
 
     imshow("Tadaa", ms.getResult());
     waitKey(0);

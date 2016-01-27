@@ -12,9 +12,12 @@
 #include <vector>
 #include <deque>
 
+#define MS_BASIC_E 0
+#define MS_SOBEL_E 1
+
 class MinSeam {
     public:
-        MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask);
+        MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask, int energyType = MS_BASIC_E);
         virtual ~MinSeam();
         cv::Mat getEnergy() const;
         cv::Mat getEnergyCum(unsigned int i = 0) const;
@@ -49,6 +52,8 @@ class MinSeam {
         unsigned int getMinSeamIndex() const;
         cv::Mat getBinMask() const;
         void getSteamPoints(cv::Point & steamBegin, cv::Point & steamEnd) const;
+        void initEnergyBasic();
+        void initEnergySobel();
 };
 
 #endif /* __MINSEAM_H__ */
