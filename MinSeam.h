@@ -48,6 +48,7 @@ class MinSeam {
         void mergeLayers();
         unsigned int getMinSeamIndex() const;
         cv::Mat getBinMask() const;
+        void getSteamPoints(cv::Point & steamBegin, cv::Point & steamEnd) const;
 };
 
 #endif /* __MINSEAM_H__ */

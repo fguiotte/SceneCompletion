@@ -150,8 +150,10 @@ cv::Mat MinSeam::showSeam(unsigned int index) const {
 }
 
 void MinSeam::computeEnergyCumMaps() {
-    Point steam0(895, 708); // premier pixel du segment bord du patch ->  couture, que l'on appelle steam (Start Sim) 
-    Point steam1(895, 740); // dernier pixel 
+    //Point steam0(895, 708); // premier pixel du segment bord du patch ->  couture, que l'on appelle steam (Start Sim) 
+    //Point steam1(895, 740); // dernier pixel 
+    Point steam0, steam1;
+    getSteamPoints(steam0, steam1);
 
     cout << "There is " << steam1.y - steam0.y << " energy maps to compute: "<< endl;
     for (int i = steam0.y; i < steam1.y; i++) { //  Pour chaque pixel de steam
@@ -278,4 +280,34 @@ void MinSeam::mergeLayers() {
 
 Mat MinSeam::getResult() const {
     return _result;
+}
+
+void MinSeam::getSteamPoints(Point & steamBegin, Point & steamEnd) const {
+    Point currentSteamBegin, currentSteamEnd;
+    int bestSteam = numeric_limits<int>::max();
+    for (int c = 0; c < _mask.cols; c++) {
+        bool fgpresent = false;
+        int pbgheight = 0;
+        for (int r = 0; r < _mask.rows; r++) {
+            if (_mask.at<uchar>(Point(c, r)) == 170) {
+                if (pbgheight == 0) currentSteamBegin = Point(c, r);
+                pbgheight++;
+                continue;
+            }
+            if (_mask.at<uchar>(Point(c, r)) == 255) {
+                currentSteamEnd = Point(c, r);
+                fgpresent = true;
+                //r = _mask.rows;
+                break;
+            }
+        }
+        if (fgpresent) {
+            if (pbgheight < bestSteam) {
+                cout << "Col " << c << " Best : " << pbgheight << endl;
+                steamBegin = currentSteamBegin;
+                steamEnd = currentSteamEnd;
+                bestSteam = pbgheight;
+            }
+        }
+    }
 }
