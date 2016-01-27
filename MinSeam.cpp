@@ -265,13 +265,13 @@ Point MinSeam::getAMaskPoint() const {
 }
 
 void MinSeam::buildMasks() {
-    getBinMask().copyTo(_bgMask);
-    _fgMask = _bgMask == 0;
+    getBinMask().copyTo(_fgMask);
+    _bgMask = _fgMask == 0;
 }
 
 void MinSeam::mergeLayers() {
-    _foreground.copyTo(_result, _bgMask);
-    _background.copyTo(_result, _fgMask);
+    _foreground.copyTo(_result, _fgMask);
+    _background.copyTo(_result, _bgMask);
 }
 
 Mat MinSeam::getResult() const {
