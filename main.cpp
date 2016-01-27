@@ -41,7 +41,7 @@ void demo1() {
     fg = imread("../img/demo/fg.jpg");
     mask = imread("../img/demo/mask.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask);
+    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());
@@ -56,7 +56,7 @@ void demo2() {
     fg = imread("../img/demo2/source2.jpg");
     mask = imread("../img/demo2/mask2b.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask);
+    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());
@@ -71,7 +71,7 @@ void demo3() {
     fg = imread("../img/demo2/source.jpg");
     mask = imread("../img/demo2/mask.png", CV_8UC1);
 
-    MinSeam ms(bg, fg, mask);
+    MinSeam ms(bg, fg, mask, MS_BASICLAB_E);
 
     imshow("Energy", ms.getEnergy());
     imshow("Seam", ms.showSeams());

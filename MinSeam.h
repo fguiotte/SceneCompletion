@@ -14,6 +14,7 @@
 
 #define MS_BASIC_E 0
 #define MS_SOBEL_E 1
+#define MS_BASICLAB_E 2
 
 class MinSeam {
     public:
@@ -53,6 +54,7 @@ class MinSeam {
         cv::Mat getBinMask() const;
         void getSteamPoints(cv::Point & steamBegin, cv::Point & steamEnd) const;
         void initEnergyBasic();
+        void initEnergyBasicLab();
         void initEnergySobel();
 };
 

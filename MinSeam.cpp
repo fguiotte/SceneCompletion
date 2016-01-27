@@ -23,6 +23,7 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
 {
     if (energyType == MS_BASIC_E) initEnergyBasic();
     if (energyType == MS_SOBEL_E) initEnergySobel();
+    if (energyType == MS_BASICLAB_E) initEnergyBasicLab();
     run();
 }
 
@@ -317,29 +318,50 @@ void MinSeam::initEnergyBasic() {
     normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
 }
 
+void MinSeam::initEnergyBasicLab() {
+    Mat_<Vec3b> lbgf, lfgf;
+    Mat bgf, fgf;
+    cvtColor(_background, lbgf, CV_BGR2Lab);
+    cvtColor(_foreground, lfgf, CV_BGR2Lab);
+    lbgf.convertTo(bgf, CV_64FC3);
+    lfgf.convertTo(fgf, CV_64FC3);
+
+    Mat energy;
+    pow((bgf - fgf), 2, energy);
+    vector<Mat> channels;
+    split(energy, channels);
+    pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
+
+    normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
+}
+
 void MinSeam::initEnergySobel() {
-    Mat_<Vec3d> bgf, fgf;
-    cvtColor(_background, bgf, CV_BGR2Lab);
-    cvtColor(_foreground, fgf, CV_BGR2Lab);
-    bgf.convertTo(bgf, CV_64FC3);
-    fgf.convertTo(fgf, CV_64FC3);
+    Mat_<Vec3b> lbgf, lfgf;
+    Mat bgf, fgf;
+    cvtColor(_background, lbgf, CV_BGR2Lab);
+    cvtColor(_foreground, lfgf, CV_BGR2Lab);
+    lbgf.convertTo(bgf, CV_64FC3);
+    lfgf.convertTo(fgf, CV_64FC3);
 
     vector<Mat> labcompb, labcompf;
     split(bgf, labcompb);
     split(fgf, labcompf);
 
     Mat bgradx, bgrady, fgradx, fgrady;
-    Sobel(labcompb[0], bgradx, 1, 0, CV_SCHARR);
-    Sobel(labcompb[0], bgrady, 0, 1, CV_SCHARR);
-    Sobel(labcompf[0], fgradx, 1, 0, CV_SCHARR);
-    Sobel(labcompf[0], fgrady, 0, 1, CV_SCHARR);
+    Sobel(labcompb[0], bgradx, CV_64FC1, 1, 0, CV_SCHARR);
+    Sobel(labcompb[0], bgrady, CV_64FC1, 0, 1, CV_SCHARR);
+    Sobel(labcompf[0], fgradx, CV_64FC1, 1, 0, CV_SCHARR);
+    Sobel(labcompf[0], fgrady, CV_64FC1, 0, 1, CV_SCHARR);
 
     Mat bgradx2, bgrady2, fgradx2, fgrady2; 
     pow(bgradx, 2, bgradx2); pow(bgrady, 2, bgrady2);
     pow(fgradx, 2, fgradx2); pow(fgrady, 2, fgrady2);
 
-    Mat bgrad = bgradx + bgrady;
-    Mat fgrad = fgradx + fgrady;
+    Mat bgrad = bgradx2 + bgrady2;
+    Mat fgrad = fgradx2 + fgrady2;
 
-    _energy = fgrad - bgrad;
+    _energy = abs(fgrad - bgrad);
+
+    imshow("Energy WIP", norm_0_255(_energy));
+    waitKey(0);
 }
