@@ -18,12 +18,24 @@ using namespace cv;
 
 GCApplication gcapp;
 
+void demo1();
+void demo2();
+void demo3();
+
 static void on_mouse(int event, int x, int y, int flags, void* param )
 {
     gcapp.mouseClick( event, x, y, flags, param );
 }
 
 int main( int argc, char* argv[] ) {
+    demo1();
+    demo2();
+    demo3();
+
+    return 0;
+}
+
+void demo1() {
     Mat bg, fg, mask;
     bg = imread("../img/demo/bg.jpg");
     fg = imread("../img/demo/fg.jpg");
@@ -33,8 +45,30 @@ int main( int argc, char* argv[] ) {
 
     imshow("Tadaa", ms.getResult());
     waitKey(0);
+}
 
-    return 0;
+void demo2() {
+    Mat bg, fg, mask;
+    bg = imread("../img/demo2/cible2.jpg");
+    fg = imread("../img/demo2/source2.jpg");
+    mask = imread("../img/demo2/mask2b.png", CV_8UC1);
+
+    MinSeam ms(bg, fg, mask);
+
+    imshow("Tadaa", ms.getResult());
+    waitKey(0);
+}
+
+void demo3() {
+    Mat bg, fg, mask;
+    bg = imread("../img/demo2/cible.jpg");
+    fg = imread("../img/demo2/source.jpg");
+    mask = imread("../img/demo2/mask.png", CV_8UC1);
+
+    MinSeam ms(bg, fg, mask);
+
+    imshow("Tadaa", ms.getResult());
+    waitKey(0);
 }
 
 int old_main( int argc, char* argv[] )
