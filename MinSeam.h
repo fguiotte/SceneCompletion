@@ -16,15 +16,12 @@ class MinSeam {
     public:
         MinSeam(const cv::Mat & background, const cv::Mat & foreground, const cv::Mat & mask);
         virtual ~MinSeam();
-        void run();
         cv::Mat getEnergy() const;
         cv::Mat getEnergyCum(unsigned int i = 0) const;
         cv::Mat showSeam(unsigned int index = 0) const;
         cv::Mat showSeams() const;
-        unsigned int getMinSeamIndex() const;
         cv::Mat getResult() const;
 
-        cv::Mat getBinMask() const;
     private:
         cv::Mat _background;
         cv::Mat _foreground;
@@ -39,6 +36,7 @@ class MinSeam {
         std::vector<std::pair<cv::Mat, cv::Point > > _energyCum;
 
     private:
+        void run();
         void neighbouroude (const cv::Point & steam0, const cv::Point & steam1, const cv::Point & steamStart);
         void smartEnergyCum(std::deque<cv::Point> & stack, const cv::Mat & values, const cv::Point & point) const;
         void initSteam(cv::Mat & energy, const cv::Point & steamBegin, const cv::Point & steamEnd) const;
@@ -48,6 +46,8 @@ class MinSeam {
         cv::Point getAMaskPoint() const;
         void buildMasks();
         void mergeLayers();
+        unsigned int getMinSeamIndex() const;
+        cv::Mat getBinMask() const;
 };
 
 #endif /* __MINSEAM_H__ */

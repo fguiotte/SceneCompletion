@@ -31,6 +31,8 @@ MinSeam::MinSeam(const cv::Mat & background, const cv::Mat & foreground, const c
     pow((channels[0] + channels[1] + channels[2]), 0.5, _energy);
 
     normalize(_energy, _energy, 0, 1, NORM_MINMAX, CV_64FC3);
+
+    run();
 }
 
 MinSeam::~MinSeam() {
