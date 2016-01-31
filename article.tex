@@ -1,0 +1,114 @@
+\documentclass[a4paper]{article}
+
+% Options possibles : 10pt, 11pt, 12pt (taille de la fonte)
+%                     oneside, twoside (recto simple, recto-verso)
+%                     draft, final (stade de dÃ©veloppement)
+
+\usepackage[utf8]{inputenc}   % LaTeX, comprends les accents !
+\usepackage[T1]{fontenc}      % Police contenant les caractÃ¨res franÃ§ais
+\usepackage[francais]{babel}  % Placez ici une liste de langues, la
+                              % derniÃ¨re Ã©tant la langue principale
+
+\usepackage[a4paper]{geometry}% RÃ©duire les marges
+% \pagestyle{headings}        % Pour mettre des entÃªtes avec les titres
+                              % des sections en haut de page
+
+\title{Calcul de couture minimale}           % Les paramÃ¨tres du titreÂ : titre, auteur, date
+\author{Maxime Broy \and Florent Guiotte}
+\date{}                       % La date n'est pas requise (la date du
+                              % jour de compilation est utilisÃ©e en son
+			      % absence)
+
+\sloppy                       % Ne pas faire dÃ©border les lignes dans la marge
+
+\begin{document}
+
+\maketitle                    % Faire un titre utilisant les donnÃ©es
+                              % passÃ©es Ã  \title, \author et \date
+
+\begin{abstract}
+L'objectif initial du projet était l'implémentation du papier Scene Completion Using Millions of Photographs [Hays et Efros. 2007]. Ce dernier consiste à remplacer dans une image toute une région par une scène présente dans une autre image provenant d'une collection de photographies. L'algorithme explore cette collection jusqu'à trouver une image avec une sémantique correspondante. On cherche donc à remplacer une région de l'image cible par quelque chose de "plausible". Il s'agit d'une technique difficilement quantifiable puisque le résultat repose sur la perception visuel humaine. 
+\end{abstract}
+
+% \tableofcontents              % Table des matiÃ¨res
+
+% \part{Titre}                % Commencer une partie...
+
+\section{Introduction et concept}               % Commencer une section, etc.
+
+Nous avons découpé le travail en plusieurs briques : 
+
+\section{Méthode}         % Section plus petite
+
+Praesent adipiscing nisi id augue consectetuer ultrices. Aenean hendrerit tortor
+quis magna condimentum accumsan. In a tortor. Fusce ut augue. Aenean interdum,
+metus sit amet mollis tincidunt, nunc sapien viverra sapien, in convallis leo
+diam sed nunc. Vivamus semper erat non leo. Vivamus ac ipsum eu velit convallis
+blandit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+inceptos himenaeos.
+
+\subsection{Grabcut}       % Encore plus petite
+
+Praesent adipiscing nisi id augue consectetuer ultrices. Aenean hendrerit tortor
+quis magna condimentum accumsan. In a tortor. Fusce ut augue. Aenean interdum,
+metus sit amet mollis tincidunt, nunc sapien viverra sapien, in convallis leo
+diam sed nunc. Vivamus semper erat non leo. Vivamus ac ipsum eu velit convallis
+blandit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+inceptos himenaeos.
+
+\subsection{Calcul d'énergie}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\subsection{Calcul d'énergie}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\subsection{Calcul des cartes d'énergie cumulée}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\subsection{Calcul de la couture}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\section{Résultat}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\section{Performance}
+
+Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
+turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
+luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
+quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
+ac egestas augue eros eget erat. Cras faucibus.
+
+\section{Références}
+
+[1] J. Hays and A. A. Efros.  2007. Scene completion using millions of photographs. ACM Trans. Graph.,
+
+[2] JIA, J., SUN, J., TANG, C.-K., AND SHUM, H.-Y. 2006. Drag and-drop pasting. ACM Trans. Graph.,
+
+
+\end{document}
