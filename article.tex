@@ -9,6 +9,7 @@
 \usepackage[francais]{babel} 
 
 \usepackage[a4paper]{geometry}
+\usepackage{subfig}
 
 \title{Calcul de couture minimale}         
 \author{Maxime Broy \and Florent Guiotte}
@@ -27,15 +28,13 @@ L'objectif initial du projet était l'implémentation du papier Scene Completion
 
 \section{Introduction et concept}               % Commencer une section, etc.
 
-\begin{figure}[!h]
-	\begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{bg.jpg}
-    	\caption{\it image cible}
-    \end{minipage}\hfill
-    \begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{fg.jpg}
-    	\caption{\it image source}
-    \end{minipage}\hfill
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[image cible]{\label{pres:bg}\includegraphics[width=0.48\textwidth]{bg.jpg}}
+    \hspace{0.030\textwidth}
+    \subfloat[image source]{\label{pres:fg}\includegraphics[width=0.48\textwidth]{fg.jpg}}
+    \caption{Les images de la démonstration}
+    \label{pres}
 \end{figure}
 
 L'idée est de "découper" une région dans l'image source, ici la biche de la Figure 2 pour la transposer dans l'image cible. La biche devra alors s'intégrer le plus parfaitement possible dans son environnement. L'idée est donc de calculer quels sont les pixels entourant la biche que nous allons transposer avec elle dans l'image cible.
@@ -45,15 +44,13 @@ Notre méthode consiste à obtenir un masque de l'image source (Figure 2) en uti
 
 \subsection{Grabcut}      
 On utilise la fonction GrabCut d'Open CV.
-\begin{figure}[!h]
-	\begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{fg.jpg}
-    	\caption{\it image source}
-    \end{minipage}\hfill
-    \begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{mask.png}
-    	\caption{\it masque}
-    \end{minipage}\hfill
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[image source]{\label{gc:fg}\includegraphics[width=0.48\textwidth]{fg.jpg}}
+    \hspace{0.030\textwidth}
+    \subfloat[masque]{\label{gc:mask}\includegraphics[width=0.48\textwidth]{mask.png}}
+    \caption{Les images de la démonstration}
+    \label{gc}
 \end{figure}
 
 L'algorithme du grabcut permet d'extraire le fond d'une image. 
@@ -63,27 +60,23 @@ Le masque obtenu en Figure 4 contient trois valeurs différentes : 0 (noir), 170
 
 Nous avons essayé plusieurs techniques pour ce calcul d'énergie : Différence au carrée entre les deux images, Sobel en RBG ou LAB.
 Voici le résultat pour une énergie calculée à partir de la différence au carrée :
-\begin{figure}[!h]
-	\begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{energy.png}
-    	\caption{\it Energie : valeur absolue de la différence au carrée}
-    \end{minipage}\hfill\begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{energy.png}
-    	\caption{\it Energie : Sobel}
-    \end{minipage}\hfill
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Valeur absolue de la différence au carré]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{energy.png}}
+    \hspace{0.030\textwidth}
+    \subfloat[Sobel]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{energy.png}}
+    \caption{Carte d'énergie}
+    \label{energie}
 \end{figure}
 
-
 \subsection{Calcul des cartes d'énergie cumulée}
-\begin{figure}[!h]
-	\begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{steam.png}
-    	\caption{\it Masque avec la ligne de départ}
-    \end{minipage}\hfill
-    \begin{minipage}[b]{0.40\linewidth}
-    	\centering \includegraphics[width=6.5cm, height=5cm]{energie_cumulee.png}
-    	\caption{\it énergie cumulée}
-    \end{minipage}\hfill
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Masque avec la ligne de départ]{\label{ecum:steam}\includegraphics[width=0.48\textwidth]{steam.png}}
+    \hspace{0.030\textwidth}
+    \subfloat[Énergie cumulée]{\label{ecum:cum}\includegraphics[width=0.48\textwidth]{energie_cumulee.png}}
+    \caption{Carte d'énergie cumulée}
+    \label{ecum}
 \end{figure}
 
 Tout d'abord, il faut définir une ligne de pixels partant du bord du masque jusqu'à l’objet (on appellera cette ligne steam, pour start seam). Il s'agit de la ligne rouge sur la Figure 6.
@@ -94,7 +87,8 @@ Une carte d’énergie correspond à l’énergie cumulée de chaque pixel, en p
 
 \begin{figure}[!h]
     	\centering \includegraphics[width=11.5cm, height=8cm]{minseam_best.png}
-    	\caption{\it Couture minimale}
+    	\caption{Couture minimale}
+        \label{meanseam}
 \end{figure}
 Pour chaque pixel qui n’est pas noir et qui n’est pas déjà visité, on explore ses voisins en sélectionnant celui dont l’énergie correspondante (dans la carte d’énergie) est minimale. Cela jusqu'à avoir atteint le point d'arrivée (voisin de droite du point de départ).
 
