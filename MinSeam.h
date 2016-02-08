@@ -25,6 +25,7 @@ class MinSeam {
         cv::Mat showSeam(unsigned int index = 0) const;
         cv::Mat showSeams() const;
         cv::Mat getResult() const;
+        unsigned int getMinSeamIndex() const;
 
     private:
         cv::Mat _background;
@@ -50,7 +51,6 @@ class MinSeam {
         cv::Point getAMaskPoint() const;
         void buildMasks();
         void mergeLayers();
-        unsigned int getMinSeamIndex() const;
         cv::Mat getBinMask() const;
         void getSteamPoints(cv::Point & steamBegin, cv::Point & steamEnd) const;
         void initEnergyBasic();

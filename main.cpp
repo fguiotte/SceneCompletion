@@ -20,6 +20,7 @@ GCApplication gcapp;
 
 void demo1(int etype = 0);
 void demo2(int etype = 0);
+void demo2_write(int etype = 0);
 void demo3(int etype = 0);
 
 static void on_mouse(int event, int x, int y, int flags, void* param )
@@ -37,9 +38,10 @@ int main( int argc, char* argv[] ) {
     } else
         etype = 0;
 
-    demo1(etype);
-    demo2(etype);
-    demo3(etype);
+    //demo1(etype);
+    //demo2(etype);
+    demo2_write(etype);
+    //demo3(etype);
 
     return 0;
 }
@@ -71,6 +73,48 @@ void demo2(int etype) {
     imshow("Seam", ms.showSeams());
 
     imshow("Tadaa", ms.getResult());
+    waitKey(0);
+}
+
+void demo2_write(int etype) {
+    Mat bg, fg, mask;
+    bg = imread("../img/demo2/cible2.jpg");
+    fg = imread("../img/demo2/source2.jpg");
+    mask = imread("../img/demo2/mask2b.png", CV_8UC1);
+
+    MinSeam ms(bg, fg, mask, etype);
+
+    imshow("Energy", ms.getEnergy());
+    imshow("Seam", ms.showSeams());
+    imshow("Tadaa", ms.getResult());
+
+
+    Mat e = ms.getEnergy();
+    Mat eb;
+    normalize(e, eb, 0, 255, NORM_MINMAX, CV_8UC3);
+
+    unsigned int i = ms.getMinSeamIndex();
+
+    Mat ec, dms;
+    ec = ms.getEnergyCum(i);
+    Mat ecb;
+    normalize(ec, ecb, 0, 255, NORM_MINMAX, CV_8UC3);
+
+
+    if (etype == 1) {
+        imwrite("energy_sobel.png", eb);
+        imwrite("min_seam_sobel.png", ms.showSeam(i));
+        imwrite("all_seam_sobel.png", ms.showSeams());
+        imwrite("energy_cum_sobel.png", ecb);
+        imwrite("result_sobel.png", ms.getResult());
+    } else {
+        imwrite("energy.png", eb);
+        imwrite("min_seams.png", ms.showSeam(i));
+        imwrite("all_seams.png", ms.showSeams());
+        imwrite("energy_cum.png", ecb);
+        imwrite("result.png", ms.getResult());
+    }
+    
     waitKey(0);
 }
 
