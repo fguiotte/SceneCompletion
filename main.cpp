@@ -109,7 +109,7 @@ void demo2_write(int etype) {
         imwrite("result_sobel.png", ms.getResult());
     } else {
         imwrite("energy.png", eb);
-        imwrite("min_seams.png", ms.showSeam(i));
+        imwrite("min_seam.png", ms.showSeam(i));
         imwrite("all_seams.png", ms.showSeams());
         imwrite("energy_cum.png", ecb);
         imwrite("result.png", ms.getResult());

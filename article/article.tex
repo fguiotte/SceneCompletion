@@ -1,4 +1,5 @@
 \documentclass[a4paper]{article}
+%\documentclass[a4paper, twocolumn]{article}
 
 % Options possibles : 10pt, 11pt, 12pt (taille de la fonte)
 %                     oneside, twoside (recto simple, recto-verso)
@@ -11,50 +12,67 @@
 \usepackage[a4paper]{geometry}
 \usepackage{subfig}
 
-\title{Calcul de couture minimale}         
-\author{Maxime Broy \and Florent Guiotte}
-\date{}                   
+\title{Calcul de couture minimale \\ {\large ESIR3 -- Imagerie Numérique -- CAV}}         
+\author{Maxime \textsc{Broy} \and Florent \textsc{Guiotte}}
+%\date{}                   
 
-\sloppy
+%\sloppy
 \begin{document}
-\maketitle {ESIR3 - Imagerie Numérique - CAV - Projet}
+\maketitle 
 \begin{abstract}
-L'objectif initial du projet était l'implémentation du papier Scene Completion Using Millions of Photographs [Hays et Efros. 2007]. Ce dernier consiste à remplacer dans une image toute une région par une scène présente dans une autre image provenant d'une collection de photographies. L'algorithme explore cette collection jusqu'à trouver une image avec une sémantique correspondante. On cherche donc à remplacer une région de l'image cible par quelque chose de "plausible". Il s'agit d'une technique difficilement quantifiable puisque le résultat repose sur la perception visuel humaine. En pratique, ce projet s'est concentré sur une des briques de cette algorithme : le calcul de la couture minimale entourant l'objet que l'on veut transférer d'une image à une autre. 
+L'objectif initial du projet était l'implémentation du papier Scene Completion Using Millions of Photographs [Hays et Efros. 2007]. 
+Ce dernier consiste à remplacer dans une image toute une région par une scène présente dans une autre image provenant d'une collection de photographies. 
+L'algorithme explore cette collection jusqu'à trouver une image avec une sémantique correspondante sans couture.
+On cherche donc à remplacer une région de l'image cible par quelque chose de <<plausible>>. 
+Il s'agit d'une technique difficilement quantifiable puisque le résultat repose sur la perception visuelle humaine. 
+En pratique, ce projet s'est concentré sur une des briques de cette algorithme~: 
+le calcul de la couture minimale entourant l'objet que l'on veut transférer d'une image à une autre. 
 \end{abstract}
 
-% \tableofcontents              % Table des matiÃ¨res
-
-
+\tableofcontents
 
 \section{Introduction et concept}               % Commencer une section, etc.
 
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[image cible]{\label{pres:bg}\includegraphics[width=0.48\textwidth]{bg.jpg}}
+    \subfloat[image cible]{\label{pres:bg}\includegraphics[width=0.48\textwidth]{img/bg.jpg}}
     \hspace{0.030\textwidth}
-    \subfloat[image source]{\label{pres:fg}\includegraphics[width=0.48\textwidth]{fg.jpg}}
+    \subfloat[image source]{\label{pres:fg}\includegraphics[width=0.48\textwidth]{img/fg.jpg}}
     \caption{Les images de la démonstration}
     \label{pres}
 \end{figure}
 
-L'idée est de "découper" une région dans l'image source, ici la biche de la Figure 2 pour la transposer dans l'image cible. La biche devra alors s'intégrer le plus parfaitement possible dans son environnement. L'idée est donc de calculer quels sont les pixels entourant la biche que nous allons transposer avec elle dans l'image cible.
+L'idée est de <<découper>> une région dans l'image source, ici le voilier de la figure \ref{pres:fg} page
+\pageref{pres:fg}, pour la transposer dans l'image cible figure \ref{pres:bg}. 
+Le voilier devra alors s'intégrer le plus parfaitement possible dans son environnement. L'idée est donc de
+calculer quels sont les pixels entourant le voilier que nous allons transposer avec lui dans l'image cible.
 
 \section{Méthode}         
-Notre méthode consiste à obtenir un masque de l'image source (Figure 2) en utilisant la fonction GrabCut d'OpenCV. Ensuite, nous calculons l'énergie entre les deux images. C'est en utilisant le masque en sortie du GrabCut et l'énergie que nous pouvons ensuite calculer les cartes d'énergie cumulée. La couture qui minimise cette énergie cumulée sera celle retenue.
+Notre méthode consiste à obtenir un masque de l'image source (figure \ref{gc:mask}) en utilisant la fonction GrabCut d'OpenCV. 
+Ensuite, nous calculons l'énergie entre les deux images. C'est en utilisant le masque en sortie du GrabCut et l'énergie que nous 
+pouvons ensuite calculer les cartes d'énergie cumulée. La couture qui minimise cette énergie cumulée sera celle retenue.
 
 \subsection{Grabcut}      
 On utilise la fonction GrabCut d'Open CV.
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[image source]{\label{gc:fg}\includegraphics[width=0.48\textwidth]{fg.jpg}}
+    \subfloat[image source]{\label{gc:fg}\includegraphics[width=0.48\textwidth]{img/fg.jpg}}
     \hspace{0.030\textwidth}
-    \subfloat[masque]{\label{gc:mask}\includegraphics[width=0.48\textwidth]{mask.png}}
-    \caption{Les images de la démonstration}
+    \subfloat[masque]{\label{gc:mask}\includegraphics[width=0.48\textwidth]{img/mask.jpg}}
+    \caption{Utilisation du GrabCut pour déterminer automatiquement un masque}
     \label{gc}
 \end{figure}
 
 L'algorithme du grabcut permet d'extraire le fond d'une image. 
-Le masque obtenu en Figure 4 contient trois valeurs différentes : 0 (noir), 170 (gris), 255 (blanc) Le gris correspond à une zone ayant une forte probabilité d'appartenir au fond. C'est dans cette zone que nous allons chercher la couture minimale.
+Nous avons utilisé cet algorithme pour créer semi automatiquement le masque que nous utiliserons plus tard
+pour déterminer le chemin de la couture minimum. 
+Ce masque (figure \ref{gc:mask}) contient trois valeurs différentes~:
+
+\begin{itemize}
+    \item Le fond (noir), déterminé par l'utilisateur. 
+    \item Le sujet (blanc), détouré par l'algorithme du grabcut selon les entrées de l'utilisateur.
+    \item La marge (gris), correspond à la zone entre le fond et le sujet, ayant une probabilité d'appartenir au fond. C'est dans cette zone que nous allons chercher la couture minimale.
+\end{itemize}
 
 \subsection{Calcul d'énergie}
 
@@ -62,9 +80,9 @@ Nous avons essayé plusieurs techniques pour ce calcul d'énergie : Différence 
 Voici le résultat pour une énergie calculée à partir de la différence au carrée :
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Valeur absolue de la différence au carré]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{energy.png}}
+    \subfloat[Valeur absolue de la différence au carré]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{img/energy.png}}
     \hspace{0.030\textwidth}
-    \subfloat[Sobel]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{energy.png}}
+    \subfloat[Sobel]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{img/energy_sobel.png}}
     \caption{Carte d'énergie}
     \label{energie}
 \end{figure}
@@ -72,9 +90,9 @@ Voici le résultat pour une énergie calculée à partir de la différence au ca
 \subsection{Calcul des cartes d'énergie cumulée}
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Masque avec la ligne de départ]{\label{ecum:steam}\includegraphics[width=0.48\textwidth]{steam.png}}
+    \subfloat[Masque avec la ligne de départ]{\label{ecum:steam}\includegraphics[width=0.48\textwidth]{img/steam.png}}
     \hspace{0.030\textwidth}
-    \subfloat[Énergie cumulée]{\label{ecum:cum}\includegraphics[width=0.48\textwidth]{energie_cumulee.png}}
+    \subfloat[Énergie cumulée]{\label{ecum:cum}\includegraphics[width=0.48\textwidth]{img/energy_cum.png}}
     \caption{Carte d'énergie cumulée}
     \label{ecum}
 \end{figure}
@@ -86,7 +104,7 @@ Une carte d’énergie correspond à l’énergie cumulée de chaque pixel, en p
 \subsection{Calcul de la couture}
 
 \begin{figure}[!h]
-    	\centering \includegraphics[width=11.5cm, height=8cm]{minseam_best.png}
+    	\centering \includegraphics[width=11.5cm, height=8cm]{img/min_seam.png}
     	\caption{Couture minimale}
         \label{meanseam}
 \end{figure}
