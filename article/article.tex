@@ -34,7 +34,7 @@ le calcul de la couture minimale entourant l'objet que l'on veut transférer d'u
 
 \tableofcontents
 
-\section{Introduction et concept}               % Commencer une section, etc.
+\section{Introduction et concept}               
 
 \begin{figure}[!ht]%htp]
     \centering
@@ -82,7 +82,7 @@ Ce masque (figure \ref{gc:mask}) contient trois valeurs différentes~:
 Nous avons essayé plusieurs techniques de calcul d'énergie~:
 
 \begin{itemize}
-    \item La différence au carrée entre les deux images
+    \item La différence au carré entre les deux images
     \item La norme du Sobel en RBG entre les deux images
     \item La norme du Sobel en LAB entre les deux images
 \end{itemize}
@@ -90,8 +90,16 @@ Nous avons essayé plusieurs techniques de calcul d'énergie~:
 Pour cet article nous avons retenu la différence au carré et le sobel en LAB. Le sobel RGB présente des résultats
 similaires au sobel LAB, la faute à nos images choisies pour les démonstrations. % TODO: formulation
 Les résultats de ces calculs sont visibles sous forme de cartes d'énergie figure \ref{energie}.
+% DONE: Maths ?
+\\
+L'énergie d'un pixel avec la première technique est donc obtenue par la formule : \\
+\begin {math}
+\sqrt {\sum_{c=0}^{3} \sum_{i} \sum_{j} (Cible (i,j) - Source (i,j))^2}
+\end {math}
+\\
+avec c : canal ; i : largeur de l'image ; j : longueur de l'image. \\
+L'énergie d'un pixel avec la seconde technique est obtenue avec l'utilisation de l'opérateur Sobel, qui détermine la dérivée de l'image par convolution avec un noyau approprié. Voir documentation OpenCV.
 
-% TODO: Maths ?
 
 \begin{figure}[!ht]%htp]
     \centering
@@ -135,11 +143,11 @@ respectivement l'une des carte d'énergie cumulées parmis toutes celles calcul�
 \subsection{Calcul de la couture}
 
 Le calcul de la couture minimale est relativement simple une fois les cartes d'énergies cumulées calculées. 
-Il suffit de sélectionner le pixel correspondant à la fin du parcours pour une carté d'énergie cumulée donnée,
-sachant que l'on connait les pixels de départ pour chaque carte. On le choisiera avec une connexité 4 par
+Il suffit de sélectionner le pixel correspondant à la fin du parcours pour une carte d'énergie cumulée donnée,
+sachant que l'on connait les pixels de départ pour chaque carte. On le choisira avec une connexité 4 par
 facilité.
 
-Une fois ce pixel selectionné, on cherche avec une connexité 8 son voisin minimisant l'énergie.
+Une fois ce pixel sélectionné, on cherche avec une connexité 8 son voisin minimisant l'énergie.
 Une fois le pixel de départ retrouvé (c'est forcément celui avec la valeur la plus faible), le chemin
 parcouru est en définitive notre couture minimisant la carte.
 
@@ -159,7 +167,7 @@ calcul global de notre algorithme.
     \label{allseams}
 \end{figure}
 
-Chaque couture aboutit avec une énergie cumulée totale, ce qui nous permet de selectionner rapidement la
+Chaque couture aboutit avec une énergie cumulée totale, ce qui nous permet de sélectionner rapidement la
 meilleure de toutes. Dans notre cas, cette couture minimale est visible figure \ref{bestseam}.
 
 \begin{figure}[!ht]%htp]
@@ -173,32 +181,44 @@ meilleure de toutes. Dans notre cas, cette couture minimale est visible figure \
 \section{Résultats}
 
 % TODO: binarisation de la zone de la couture & merge
-% TODO: comparaison, explication des deux résultats, avantage energie carrée vs sobel
-% TODO: chroma, avantage RGB vs LAB
-% TODO: presentation biche ? 
+% DONE: comparaison, explication des deux résultats, avantage energie carrée vs sobel
+% DONE: chroma, avantage RGB vs LAB
 
-Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
-turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
-luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
-quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
-ac egestas augue eros eget erat. Cras faucibus.
+
+Voici nos résultats, figure \ref{resultsA} après fusion des deux images en suivant la couture minimale. La  version basée sur l'énergie au carré propose une couture plus proche du sujet car elle semble moins sensible au gradient engendrée par les vagues.  Cependant, cette sensibilité permet à la version Sobel de conserver le haut du mât du bateau, ce qui n'est pas le cas pour l'autre méthode de calcul d'énergie.
+
+De plus, nous avons obtenu des résultats (non présentés dans ce papier) similaire en prenant des versions RGB ou LAB des images source et cible. Nous présentons cependant une potentielle influence de ce choix si nous avions été jusqu'à la correction chromatique de l'image résultat.
+
+En effet, comme on peut le voir sur ces images, une correction chromatique des pixels entourant le sujet augmenterait considérablement la qualité du rendu. La capacité  d'illusion serait alors quasi-parfaite.
+
 
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Valeur absolue de la différence au carré]{\label{results:e}\includegraphics[width=0.48\textwidth]{img/result.png}}
+    \subfloat[Valeur absolue de la différence au carré]{\label{resultsA:e}\includegraphics[width=0.48\textwidth]{img/result.png}}
     \hspace{0.030\textwidth}
-    \subfloat[Sobel]{\label{results:sobel}\includegraphics[width=0.48\textwidth]{img/result_sobel.png}}
+    \subfloat[Sobel]{\label{resultsA:sobel}\includegraphics[width=0.48\textwidth]{img/result_sobel.png}}
     \caption{Fusion des deux images suivant la couture minimale}
-    \label{results}
+    \label{resultsA}
+\end{figure}
+
+% TODO: presentation biche : image résultat et positionnement de la figure...
+De plus et pour terminer, voici des résultats sur un autre jeu d'image :
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Image source]{\label{resultsB:s}\includegraphics[width=0.28\textwidth]{img/fg_bamby.jpg}}
+    \hspace{0.030\textwidth}
+    \subfloat[Image cible]{\label{resultsB:c}\includegraphics[width=0.28\textwidth]{img/bg_bamby.jpg}}
+    \hspace{0.030\textwidth}
+    \subfloat[Résultat, avec la valeur absolue de la différence au carré pour l'énergie et les images en RGB]{\label{resultsB:r}\includegraphics[width=0.28\textwidth]{img/result_sobel.png}}
+    \caption{Fusion des deux images suivant la couture minimale}
+    \label{resultsB}
 \end{figure}
 
 \section{Performance}
 
-Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
-turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
-luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
-quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
-ac egestas augue eros eget erat. Cras faucibus.
+Nous n'avons pas développé de métriques précises concernant le temps d'exécution et l'utilisation mémoire de notre programme. Cependant, nous avons toujours veillé à ne pas parcourir inutilement les images pour calculer la couture minimale.
+
+Les performances de notre algorithme dépendent notamment du nombre de pixel qui compose la ligne de départ <<steam>>. En effet, il en découle le nombre d'itération de la boucle assurant le calcul des coutures minimales.
 
 \section{Références}
 
