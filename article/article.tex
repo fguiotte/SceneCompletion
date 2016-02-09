@@ -4,10 +4,12 @@
 % Options possibles : 10pt, 11pt, 12pt (taille de la fonte)
 %                     oneside, twoside (recto simple, recto-verso)
 %                     draft, final (stade de dÃ©veloppement)
-\usepackage{graphicx}
+%\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[francais]{babel} 
+\usepackage{fancyhdr}
 
 \usepackage[a4paper]{geometry}
 \usepackage{subfig}
@@ -15,6 +17,7 @@
 \title{Calcul de couture minimale \\ {\large ESIR3 -- Imagerie Numérique -- CAV}}         
 \author{Maxime \textsc{Broy} \and Florent \textsc{Guiotte}}
 %\date{}                   
+\pagestyle{fancy}
 
 %\sloppy
 \begin{document}
@@ -80,7 +83,7 @@ Nous avons essayé plusieurs techniques pour ce calcul d'énergie : Différence 
 Voici le résultat pour une énergie calculée à partir de la différence au carrée :
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Valeur absolue de la différence au carré]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{img/energy.png}}
+    \subfloat[Valeur absolue de la différence au carré]{\label{energie:e}\includegraphics[width=0.48\textwidth]{img/energy.png}}
     \hspace{0.030\textwidth}
     \subfloat[Sobel]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{img/energy_sobel.png}}
     \caption{Carte d'énergie}
@@ -90,10 +93,10 @@ Voici le résultat pour une énergie calculée à partir de la différence au ca
 \subsection{Calcul des cartes d'énergie cumulée}
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Masque avec la ligne de départ]{\label{ecum:steam}\includegraphics[width=0.48\textwidth]{img/steam.png}}
+    \subfloat[Valeur absolue de la différence au carré]{\label{ecum:e}\includegraphics[width=0.48\textwidth]{img/energy_cum.png}}
     \hspace{0.030\textwidth}
-    \subfloat[Énergie cumulée]{\label{ecum:cum}\includegraphics[width=0.48\textwidth]{img/energy_cum.png}}
-    \caption{Carte d'énergie cumulée}
+    \subfloat[Sobel]{\label{ecum:sobel}\includegraphics[width=0.48\textwidth]{img/energy_cum_sobel.png}}
+    \caption{Cartes d'énergie cumulée}
     \label{ecum}
 \end{figure}
 
@@ -103,10 +106,22 @@ Une carte d’énergie correspond à l’énergie cumulée de chaque pixel, en p
 
 \subsection{Calcul de la couture}
 
-\begin{figure}[!h]
-    	\centering \includegraphics[width=11.5cm, height=8cm]{img/min_seam.png}
-    	\caption{Couture minimale}
-        \label{meanseam}
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Valeur absolue de la différence au carré]{\label{allseams:e}\includegraphics[width=0.48\textwidth]{img/all_seams.png}}
+    \hspace{0.030\textwidth}
+    \subfloat[Sobel]{\label{allseams:sobel}\includegraphics[width=0.48\textwidth]{img/all_seam_sobel.png}}
+    \caption{Coutures minimisant l'énergie, affichées sur carte d'énergie}
+    \label{allseams}
+\end{figure}
+
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Valeur absolue de la différence au carré]{\label{bestseam:e}\includegraphics[width=0.48\textwidth]{img/min_seam.png}}
+    \hspace{0.030\textwidth}
+    \subfloat[Sobel]{\label{bestseam:sobel}\includegraphics[width=0.48\textwidth]{img/min_seam_sobel.png}}
+    \caption{Meilleure des coutures, affichée sur carte d'énergie cumulée}
+    \label{bestseam}
 \end{figure}
 Pour chaque pixel qui n’est pas noir et qui n’est pas déjà visité, on explore ses voisins en sélectionnant celui dont l’énergie correspondante (dans la carte d’énergie) est minimale. Cela jusqu'à avoir atteint le point d'arrivée (voisin de droite du point de départ).
 
@@ -117,6 +132,15 @@ turpis et mi imperdiet lobortis. Nam eu massa et eros congue gravida. Sed
 luctus. Nullam sit amet nunc a tellus lacinia tempor. Praesent tincidunt ligula
 quis lacus. Nullam sodales, mi sed venenatis egestas, risus turpis dictum elit,
 ac egestas augue eros eget erat. Cras faucibus.
+
+\begin{figure}[!ht]%htp]
+    \centering
+    \subfloat[Valeur absolue de la différence au carré]{\label{results:e}\includegraphics[width=0.48\textwidth]{img/result.png}}
+    \hspace{0.030\textwidth}
+    \subfloat[Sobel]{\label{results:sobel}\includegraphics[width=0.48\textwidth]{img/result_sobel.png}}
+    \caption{Fusion des deux images suivant la couture minimale}
+    \label{results}
+\end{figure}
 
 \section{Performance}
 
