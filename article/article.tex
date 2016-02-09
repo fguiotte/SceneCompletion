@@ -79,18 +79,48 @@ Ce masque (figure \ref{gc:mask}) contient trois valeurs différentes~:
 
 \subsection{Calcul d'énergie}
 
-Nous avons essayé plusieurs techniques pour ce calcul d'énergie : Différence au carrée entre les deux images, Sobel en RBG ou LAB.
-Voici le résultat pour une énergie calculée à partir de la différence au carrée :
+Nous avons essayé plusieurs techniques de calcul d'énergie~:
+
+\begin{itemize}
+    \item La différence au carrée entre les deux images
+    \item La norme du Sobel en RBG entre les deux images
+    \item La norme du Sobel en LAB entre les deux images
+\end{itemize}
+
+Pour cet article nous avons retenu la différence au carré et le sobel en LAB. Le sobel RGB présente des résultats
+similaires au sobel LAB, la faute à nos images choisies pour les démonstrations. % TODO: formulation
+Les résultats de ces calculs sont visibles sous forme de cartes d'énergie figure \ref{energie}.
+
 \begin{figure}[!ht]%htp]
     \centering
     \subfloat[Valeur absolue de la différence au carré]{\label{energie:e}\includegraphics[width=0.48\textwidth]{img/energy.png}}
     \hspace{0.030\textwidth}
     \subfloat[Sobel]{\label{energie:sobel}\includegraphics[width=0.48\textwidth]{img/energy_sobel.png}}
-    \caption{Carte d'énergie}
+    \caption{Cartes d'énergie}
     \label{energie}
 \end{figure}
 
 \subsection{Calcul des cartes d'énergie cumulée}
+
+Tout d'abord, il faut définir une ligne de pixels partant du bord du masque de fond jusqu'au masque du sujet (on appellera
+cette ligne {\em steam}, pour {\em start seam}). %Il s'agit de la ligne rouge sur la figure \ref{derp}.
+Cette ligne est choisie automatiquement pour être la plus courte possible à travers la marge.
+
+Les raisons pour garder cette ligne la plus courte possible sont multiples. D'une part, les coutures minimales
+vont toutes passer par ce <<goulot d'étranglement>>. D'autre part, notre méthode génère une carte d'énergie
+cumulée par pixel composant cette ligne de départ. Afin de minimiser le temps d'éxecution de l'algorithme il
+est judicieux de limiter au maximum ces calculs.
+
+Une carte d’énergie cumulée correspond à la somme de l'énergie de chaque pixel de la carte d'énergie. 
+On part d’un pixel de steam jusqu’à faire le tour de l’objet en explorant le voisinage à l'aide d'une connexité 8.
+Plusieurs techniques ont été testée pour le cumul de l'énergie. Pour favoriser les bons résultats on propage
+en priorité le calcul de l'énergie parmis les voisins des pixels les plus prometteurs (ayant une énergie moins élevés) 
+avec le risque de faire apparaitre des minimums locaux.
+
+Un exemple de ces cartes d'énergie cumulées selon les deux cartes d'énergies précédemment calculées, soit la
+valeur absolue de la différence au carré et sobel, sont visibles figure \ref{ecum}. Ces exemples sont
+respectivement l'une des carte d'énergie cumulées parmis toutes celles calculées, pour chaque pixel composant la ligne de départ.
+
 \begin{figure}[!ht]%htp]
     \centering
     \subfloat[Valeur absolue de la différence au carré]{\label{ecum:e}\includegraphics[width=0.48\textwidth]{img/energy_cum.png}}
@@ -99,10 +129,6 @@ Voici le résultat pour une énergie calculée à partir de la différence au ca
     \caption{Cartes d'énergie cumulée}
     \label{ecum}
 \end{figure}
-
-Tout d'abord, il faut définir une ligne de pixels partant du bord du masque jusqu'à l’objet (on appellera cette ligne steam, pour start seam). Il s'agit de la ligne rouge sur la Figure 6.
-Il y a une carte d’énergie par pixels de la steam.
-Une carte d’énergie correspond à l’énergie cumulée de chaque pixel, en partant d’un pixel de steam jusqu’à faire le tour de l’objet en explorant le voisinage (connexité 8)
 
 \subsection{Calcul de la couture}
 
