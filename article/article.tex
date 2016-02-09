@@ -115,7 +115,7 @@ Une carte d’énergie cumulée correspond à la somme de l'énergie de chaque p
 On part d’un pixel de steam jusqu’à faire le tour de l’objet en explorant le voisinage à l'aide d'une connexité 8.
 Plusieurs techniques ont été testée pour le cumul de l'énergie. Pour favoriser les bons résultats on propage
 en priorité le calcul de l'énergie parmis les voisins des pixels les plus prometteurs (ayant une énergie moins élevés) 
-avec le risque de faire apparaitre des minimums locaux.
+avec par contre le risque de faire apparaitre des minimums locaux.
 
 Un exemple de ces cartes d'énergie cumulées selon les deux cartes d'énergies précédemment calculées, soit la
 valeur absolue de la différence au carré et sobel, sont visibles figure \ref{ecum}. Ces exemples sont
@@ -132,6 +132,22 @@ respectivement l'une des carte d'énergie cumulées parmis toutes celles calcul�
 
 \subsection{Calcul de la couture}
 
+Le calcul de la couture minimale est relativement simple une fois les cartes d'énergies cumulées calculées. 
+Il suffit de sélectionner le pixel correspondant à la fin du parcours pour une carté d'énergie cumulée donnée,
+sachant que l'on connait les pixels de départ pour chaque carte. On le choisiera avec une connexité 4 par
+facilité.
+
+Une fois ce pixel selectionné, on cherche avec une connexité 8 son voisin minimisant l'énergie.
+Une fois le pixel de départ retrouvé (c'est forcément celui avec la valeur la plus faible), le chemin
+parcouru est en définitive notre couture minimisant la carte.
+
+On peut effectuer ce calcul sur chacune des cartes d'énergie cumulée, l'affichage de toutes les coutures pour
+une carte d'énergie donnée est visible figure \ref{allseams}. Sur ces illustrations, on peut remarquer la
+{\em steam} qui ressort visuellement en tant que source de chaqu'une des coutures.
+On peut aussi remarquer que les coutures tendent à se joindre. On peut en déduire que l'énergie
+cumulée des cartes doit être semblable sur ces chemins. Ce peut être une piste d'optimisation du temps de
+calcul global de notre algorithme.
+
 \begin{figure}[!ht]%htp]
     \centering
     \subfloat[Valeur absolue de la différence au carré]{\label{allseams:e}\includegraphics[width=0.48\textwidth]{img/all_seams.png}}
@@ -141,6 +157,9 @@ respectivement l'une des carte d'énergie cumulées parmis toutes celles calcul�
     \label{allseams}
 \end{figure}
 
+Chaque couture aboutit avec une énergie cumulée totale, ce qui nous permet de selectionner rapidement la
+meilleure de toutes. Dans notre cas, cette couture minimale est visible figure \ref{bestseam}.
+
 \begin{figure}[!ht]%htp]
     \centering
     \subfloat[Valeur absolue de la différence au carré]{\label{bestseam:e}\includegraphics[width=0.48\textwidth]{img/min_seam.png}}
@@ -149,8 +168,6 @@ respectivement l'une des carte d'énergie cumulées parmis toutes celles calcul�
     \caption{Meilleure des coutures, affichée sur carte d'énergie cumulée}
     \label{bestseam}
 \end{figure}
-Pour chaque pixel qui n’est pas noir et qui n’est pas déjà visité, on explore ses voisins en sélectionnant celui dont l’énergie correspondante (dans la carte d’énergie) est minimale. Cela jusqu'à avoir atteint le point d'arrivée (voisin de droite du point de départ).
-
 \section{Résultat}
 
 Quisque dolor odio, aliquam quis, placerat sed, hendrerit eu, magna. Cras at
