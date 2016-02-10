@@ -28,7 +28,7 @@ Ce dernier consiste à remplacer dans une image toute une région par une scène
 L'algorithme explore cette collection jusqu'à trouver une image avec une sémantique correspondante sans couture.
 On cherche donc à remplacer une région de l'image cible par quelque chose de <<plausible>>. 
 Il s'agit d'une technique difficilement quantifiable puisque le résultat repose sur la perception visuelle humaine. 
-En pratique, ce projet s'est concentré sur une des briques de cette algorithme~: 
+En pratique, ce projet s'est concentré sur une des briques de cet algorithme~: 
 le calcul de la couture minimale entourant l'objet que l'on veut transférer d'une image à une autre. 
 \end{abstract}
 
@@ -66,7 +66,7 @@ On utilise la fonction GrabCut d'Open CV.
     \label{gc}
 \end{figure}
 
-L'algorithme du grabcut permet d'extraire le fond d'une image. 
+L'algorithme du grabcut[2] permet d'extraire le fond d'une image. 
 Nous avons utilisé cet algorithme pour créer semi automatiquement le masque que nous utiliserons plus tard
 pour déterminer le chemin de la couture minimum. 
 Ce masque (figure \ref{gc:mask}) contient trois valeurs différentes~:
@@ -90,16 +90,29 @@ Nous avons essayé plusieurs techniques de calcul d'énergie~:
 Pour cet article nous avons retenu la différence au carré et le sobel en LAB. Le sobel RGB présente des résultats
 similaires au sobel LAB, la faute à nos images choisies pour les démonstrations. % TODO: formulation
 Les résultats de ces calculs sont visibles sous forme de cartes d'énergie figure \ref{energie}.
-% DONE: Maths ?
-\\
-L'énergie d'un pixel avec la première technique est donc obtenue par la formule : \\
-\begin {math}
-\sqrt {\sum_{c=0}^{3} \sum_{i} \sum_{j} (Cible (i,j) - Source (i,j))^2}
-\end {math}
-\\
-avec c : canal ; i : largeur de l'image ; j : longueur de l'image. \\
+% DONE: Maths.
+L'énergie d'un pixel avec la première technique est donc obtenue par la formule :
+\[
+    \sum_{c=1}^{3} \sum_{i} \sum_{j} (Cible (i,j) - Source (i,j))^2
+\]
+
+Avec :
+\begin{itemize}
+    \item $c$ le canal de l'image (soit L, A ou B)
+    \item $i$ la largeur de l'image
+    \item $j$ la longueur de l'image
+\end{itemize}
+
 L'énergie d'un pixel avec la seconde technique est obtenue avec l'utilisation de l'opérateur Sobel, qui détermine la dérivée de l'image par convolution avec un noyau approprié. Voir documentation OpenCV.
 
+%\\
+%L'énergie d'un pixel avec la première technique est donc obtenue par la formule : \\
+%\begin {math}
+%\sqrt {\sum_{c=0}^{3} \sum_{i} \sum_{j} (Cible (i,j) - Source (i,j))^2}
+%\end {math}
+%\\
+%avec c : canal ; i : largeur de l'image ; j : longueur de l'image. \\
+%L'énergie d'un pixel avec la seconde technique est obtenue avec l'utilisation de l'opérateur Sobel, qui détermine la dérivée de l'image par convolution avec un noyau approprié. Voir documentation OpenCV.
 
 \begin{figure}[!ht]%htp]
     \centering
@@ -153,7 +166,7 @@ parcouru est en définitive notre couture minimisant la carte.
 
 On peut effectuer ce calcul sur chacune des cartes d'énergie cumulée, l'affichage de toutes les coutures pour
 une carte d'énergie donnée est visible figure \ref{allseams}. Sur ces illustrations, on peut remarquer la
-{\em steam} qui ressort visuellement en tant que source de chaqu'une des coutures.
+{\em steam} qui ressort visuellement en tant que source de chacune des coutures.
 On peut aussi remarquer que les coutures tendent à se joindre. On peut en déduire que l'énergie
 cumulée des cartes doit être semblable sur ces chemins. Ce peut être une piste d'optimisation du temps de
 calcul global de notre algorithme.
@@ -185,12 +198,28 @@ meilleure de toutes. Dans notre cas, cette couture minimale est visible figure \
 % DONE: chroma, avantage RGB vs LAB
 
 
-Voici nos résultats, figure \ref{resultsA} après fusion des deux images en suivant la couture minimale. La  version basée sur l'énergie au carré propose une couture plus proche du sujet car elle semble moins sensible au gradient engendrée par les vagues.  Cependant, cette sensibilité permet à la version Sobel de conserver le haut du mât du bateau, ce qui n'est pas le cas pour l'autre méthode de calcul d'énergie.
+Voici nos résultats, figure \ref{resultsA} après fusion des deux images en suivant la couture minimale. La
+version basée sur l'énergie au carré propose une couture plus proche du sujet car elle est moins sensible au gradient engendré par les vagues.
+Cependant, cette sensibilité permet à la version Sobel de conserver le haut du mât du bateau, ce qui n'est pas le cas pour l'autre méthode de calcul d'énergie.
 
-De plus, nous avons obtenu des résultats (non présentés dans ce papier) similaire en prenant des versions RGB ou LAB des images source et cible. Nous présentons cependant une potentielle influence de ce choix si nous avions été jusqu'à la correction chromatique de l'image résultat.
+En réalité, la version basée sur l'énergie au carrée à tendance à favoriser les chemins les plus courts.
+Cela est causé par la différence sur l'un des canaux (RGB ou LAB) qui provoque l'apparition d'énergie, ce qui
+est presque tout le temps le cas. Le chemin le plus court intègrera donc moins ces différences. 
+À l'inverse, le calcul de sobel va augmenter les énergies seulement au contact d'un contour sur l'une ou
+l'autre des images. Ce procédé permet à la couture d'explorer des chemins plus intéressants,
+plus éloignés du sujet si besoin. 
+Le plus gros inconvénient de sobel, que n'a pas la différence au carrée, est visible dans les cas où la couture doit
+passer à travers un objet. La différence au carrée cherche le chemin le plus direct tandis que la couture
+calculée avec sobel tend à explorer <<l'intérieur>> de l'objet pour trouver une <<bonne>> sortie.
+Ce comportement provoque des artefacts tel que, dans nos tests, le tronc d'un arbre coupé en deux dans le sens
+de la hauteur avec sobel tandis que la différence au carrée fait passer la couture en ligne droite entre le sujet et le
+tronc.
+
+Concernant les canaux, nous avons obtenu des résultats (non présentés dans ce papier) similaire en prenant des versions RGB
+ou LAB des images source et cible. Nous présentons cependant une potentielle influence de ce choix si nous
+avions été jusqu'à la prise en compte des couleurs et la correction chromatique de l'image résultat.
 
 En effet, comme on peut le voir sur ces images, une correction chromatique des pixels entourant le sujet augmenterait considérablement la qualité du rendu. La capacité  d'illusion serait alors quasi-parfaite.
-
 
 \begin{figure}[!ht]%htp]
     \centering
@@ -201,22 +230,25 @@ En effet, comme on peut le voir sur ces images, une correction chromatique des p
     \label{resultsA}
 \end{figure}
 
-% TODO: presentation biche : image résultat et positionnement de la figure...
-De plus et pour terminer, voici des résultats sur un autre jeu d'image :
+De plus et pour terminer, voici des résultats sur un autre jeu d'image visible figure \ref{resultsB}.
+
 \begin{figure}[!ht]%htp]
     \centering
-    \subfloat[Image source]{\label{resultsB:s}\includegraphics[width=0.28\textwidth]{img/fg_bamby.jpg}}
+    \subfloat[Image source]{\label{resultsB:s}\includegraphics[width=0.48\textwidth]{img/bamby_fg.jpg}}
     \hspace{0.030\textwidth}
-    \subfloat[Image cible]{\label{resultsB:c}\includegraphics[width=0.28\textwidth]{img/bg_bamby.jpg}}
+    \subfloat[Image cible]{\label{resultsB:c}\includegraphics[width=0.48\textwidth]{img/bamby_bg.jpg}} \\
+    \subfloat[Différence au carré]{\label{resultsB:s}\includegraphics[width=0.48\textwidth]{img/bamby_e.jpg}}
     \hspace{0.030\textwidth}
-    \subfloat[Résultat, avec la valeur absolue de la différence au carré pour l'énergie et les images en RGB]{\label{resultsB:r}\includegraphics[width=0.28\textwidth]{img/result_sobel.png}}
+    \subfloat[Sobel]{\label{resultsB:c}\includegraphics[width=0.48\textwidth]{img/bamby_sobel.jpg}}
+    \hspace{0.030\textwidth}
     \caption{Fusion des deux images suivant la couture minimale}
     \label{resultsB}
 \end{figure}
 
-\section{Performance}
+\section{Performances}
 
-Nous n'avons pas développé de métriques précises concernant le temps d'exécution et l'utilisation mémoire de notre programme. Cependant, nous avons toujours veillé à ne pas parcourir inutilement les images pour calculer la couture minimale.
+Nous n'avons pas développé de métriques précises concernant le temps d'exécution et l'utilisation mémoire de notre programme. 
+Cependant, nous avons toujours veillé à ne pas parcourir inutilement les images pour calculer la couture minimale.
 
 Les performances de notre algorithme dépendent notamment du nombre de pixel qui compose la ligne de départ <<steam>>. En effet, il en découle le nombre d'itération de la boucle assurant le calcul des coutures minimales.
 
@@ -226,7 +258,5 @@ Les performances de notre algorithme dépendent notamment du nombre de pixel qui
 \\
 
 [2] JIA, J., SUN, J., TANG, C.-K., AND SHUM, H.-Y. 2006. Drag and-drop pasting. ACM Trans. Graph.,
-
-
 
 \end{document}
