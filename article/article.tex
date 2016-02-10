@@ -23,7 +23,7 @@
 \begin{document}
 \maketitle 
 \begin{abstract}
-L'objectif initial du projet était l'implémentation du papier Scene Completion Using Millions of Photographs [Hays et Efros. 2007]. 
+L'objectif initial du projet était l'implémentation du papier {\em Scene Completion Using Millions of Photographs [Hays et Efros. 2007]}. 
 Ce dernier consiste à remplacer dans une image toute une région par une scène présente dans une autre image provenant d'une collection de photographies. 
 L'algorithme explore cette collection jusqu'à trouver une image avec une sémantique correspondante sans couture.
 On cherche donc à remplacer une région de l'image cible par quelque chose de <<plausible>>. 
@@ -93,14 +93,13 @@ Les résultats de ces calculs sont visibles sous forme de cartes d'énergie figu
 % DONE: Maths.
 L'énergie d'un pixel avec la première technique est donc obtenue par la formule :
 \[
-    \sum_{c=1}^{3} \sum_{i} \sum_{j} (Cible (i,j) - Source (i,j))^2
+    E(i,j) = \sum_{c=1}^{3} (Cible (i,j) - Source (i,j))^2
 \]
 
 Avec :
 \begin{itemize}
     \item $c$ le canal de l'image (soit L, A ou B)
-    \item $i$ la largeur de l'image
-    \item $j$ la longueur de l'image
+    \item $i$ et $j$ décrivant les coordonnées du pixel
 \end{itemize}
 
 L'énergie d'un pixel avec la seconde technique est obtenue avec l'utilisation de l'opérateur Sobel, qui détermine la dérivée de l'image par convolution avec un noyau approprié. Voir documentation OpenCV.
