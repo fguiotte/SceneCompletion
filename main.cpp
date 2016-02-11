@@ -32,25 +32,25 @@ int main( int argc, char* argv[] ) {
     int etype;
     if (argc == 2) {
         string a(argv[1]);
-        if (a == "basic") etype = 0;
-        if (a == "sobel") etype = 1;
-        if (a == "basiclab") etype = 2;
+        if (a == "basic") etype = MS_BASIC_E;
+        if (a == "sobel") etype = MS_SOBEL_E;
+        if (a == "basiclab") etype = MS_BASICLAB_E;
     } else
         etype = 0;
 
-    //demo1(etype);
-    //demo2(etype);
-    demo2_write(etype);
-    //demo3(etype);
+    demo1(etype);
+    demo2(etype);
+    //demo2_write(etype);
+    demo3(etype);
 
     return 0;
 }
 
 void demo1(int etype) {
     Mat bg, fg, mask;
-    bg = imread("../img/demo/bg.jpg");
-    fg = imread("../img/demo/fg.jpg");
-    mask = imread("../img/demo/mask.png", CV_8UC1);
+    bg = imread("../img/bg1.jpg");
+    fg = imread("../img/fg1.jpg");
+    mask = imread("../img/mask1.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask, etype);
 
@@ -63,9 +63,9 @@ void demo1(int etype) {
 
 void demo2(int etype) {
     Mat bg, fg, mask;
-    bg = imread("../img/demo2/cible2.jpg");
-    fg = imread("../img/demo2/source2.jpg");
-    mask = imread("../img/demo2/mask2b.png", CV_8UC1);
+    bg = imread("../img/bg2.jpg");
+    fg = imread("../img/fg2.jpg");
+    mask = imread("../img/mask2.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask, etype);
 
@@ -78,9 +78,9 @@ void demo2(int etype) {
 
 void demo2_write(int etype) {
     Mat bg, fg, mask;
-    bg = imread("../img/demo2/cible2.jpg");
-    fg = imread("../img/demo2/source2.jpg");
-    mask = imread("../img/demo2/mask2b.png", CV_8UC1);
+    bg = imread("../img/bg2.jpg");
+    fg = imread("../img/fg2.jpg");
+    mask = imread("../img/mask2.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask, etype);
 
@@ -104,7 +104,7 @@ void demo2_write(int etype) {
     if (etype == 1) {
         imwrite("energy_sobel.png", eb);
         imwrite("min_seam_sobel.png", ms.showSeam(i));
-        imwrite("all_seam_sobel.png", ms.showSeams());
+        imwrite("all_seams_sobel.png", ms.showSeams());
         imwrite("energy_cum_sobel.png", ecb);
         imwrite("result_sobel.png", ms.getResult());
     } else {
@@ -120,9 +120,9 @@ void demo2_write(int etype) {
 
 void demo3(int etype) {
     Mat bg, fg, mask;
-    bg = imread("../img/demo2/cible.jpg");
-    fg = imread("../img/demo2/source.jpg");
-    mask = imread("../img/demo2/mask.png", CV_8UC1);
+    bg = imread("../img/bg3.jpg");
+    fg = imread("../img/fg3.jpg");
+    mask = imread("../img/mask3.png", CV_8UC1);
 
     MinSeam ms(bg, fg, mask, etype);
 
