@@ -1,6 +1,6 @@
 /***************************************************************************
  *
- * TODO: Project Title
+ * Project : ESIR3, CAV Project, Scene Completion
  *
  * Author: Florent Guiotte <guiotte.florent@gmail.com>, Maxime Broy <broy.maxime@gmail.com>
  *
