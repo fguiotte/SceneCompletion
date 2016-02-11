@@ -2,7 +2,7 @@
  *
  * TODO: Project Title
  *
- * Author: Florent Guiotte <guiotte.florent@gmail.com>
+ * Author: Florent Guiotte <guiotte.florent@gmail.com>, Maxime Broy <broy.maxime@gmail.com>
  *
  **************************************************************************/
 
