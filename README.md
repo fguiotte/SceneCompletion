@@ -4,8 +4,8 @@
 Image completion algorithm with seamless blending.
 
 ## Requirement
-OpenCV 2.4
-CMake 2.8
+* OpenCV 2.4
+* CMake 2.8
 
 ## Execution
 ```sh
